@@ -1,0 +1,50 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "etracer"
+version = "0.1.0"
+description = "Enhanced Python tracer with AI-powered stack trace analysis"
+readme = "README.md"
+authors = [
+    {name = "Emmanuel King Kasulani", email = "kasulani@gmail.com"}
+]
+license = {text = "Apache-2.0"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+keywords = ["debug", "trace", "exception", "stack trace", "ai", "error analysis"]
+requires-python = ">=3.8"
+dependencies = [
+    "pydantic>=2.0.0",
+    "openai>=1.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black",
+    "isort",
+    "flake8",
+    "mypy",
+]
+docs = [
+    "sphinx",
+    "sphinx-rtd-theme",
+]
+
+[project.urls]
+Homepage = "https://github.com/kasulani/etracer"
+Repository = "https://github.com/kasulani/etracer"
+"Bug Tracker" = "https://github.com/kasulani/etracer/issues"
+
+[tool.setuptools.packages.find]
+where = ["src"]

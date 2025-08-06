@@ -10,23 +10,23 @@ more readable stack traces with AI-powered explanations and suggested fixes.
 
 Usage:
     # Global exception handling
-    import tracer
-    tracer.enable()
+    import etracer
+    etracer.enable()
 
     # As a decorator
-    @tracer.debug
+    @etracer.debug
     def my_function():
         # code that might raise exceptions
 
     # As a context manager
-    with tracer.catch_errors():
+    with etracer.catch_errors():
         # code that might raise exceptions
 
     # Explicit usage
     try:
         # code that might fail
     except Exception as e:
-        tracer.analyze_exception(e)
+        etracer.analyze_exception(e)
 """
 import sys
 import os
@@ -38,9 +38,15 @@ import threading
 from types import TracebackType
 from typing import Any, List, Optional, Type, Callable, Union
 
-from model import Frame, DataForAnalysis, AiAnalysis, CacheData
-from type import AnalysisGetterInterface, PrinterInterface, CacheInterface, ProgressIndicatorInterface, FileBasedCache, \
-    CacheConfig, AIConfig, AIClient, Colors, ConsolePrinter, Spinner, Timer, _DEFAULT_MODEL, _CACHE_DIR
+from .models import Frame, DataForAnalysis, AiAnalysis, CacheData
+from .interfaces import (
+    AnalysisGetterInterface, CacheInterface, PrinterInterface,
+    ProgressIndicatorInterface
+)
+from .utils import (
+    FileBasedCache, CacheConfig, AIConfig, AIClient,
+    Colors, ConsolePrinter, Spinner, Timer,
+)
 
 # Constants
 _MAX_STR_LEN = 100
@@ -71,10 +77,7 @@ class Tracer:
         # dependency injection
         self._ai_client: Optional[AnalysisGetterInterface] = ai_client if ai_client is not None else AIClient(
             config=self.ai_config)
-        self._cache: Optional[CacheInterface] = cache if cache is not None else FileBasedCache(
-            CacheConfig(),
-            cache_dir=_CACHE_DIR,
-        )
+        self._cache: Optional[CacheInterface] = cache if cache is not None else FileBasedCache(CacheConfig())
         self._progress_indicator: Optional[
             ProgressIndicatorInterface] = progress_indicator if progress_indicator is not None else Spinner(
             stop_event=threading.Event(),
@@ -508,6 +511,6 @@ def set_printer(printer: PrinterInterface) -> None:
 
 
 # Additional public API for AI configuration
-def configure_ai(api_key: str, model: str = _DEFAULT_MODEL, enabled: bool = True, use_cache: bool = True) -> None:
+def configure_ai(api_key: str, model: str, enabled: bool = True, use_cache: bool = True) -> None:
     """Configure the AI integration."""
     _tracer.ai_config.configure(api_key=api_key, model=model, enabled=enabled, use_cache=use_cache)

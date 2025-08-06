@@ -16,8 +16,13 @@ fixes.
 ## Installation
 
 ```bash
-# Coming soon: pip installation
-# For now, just copy the tracer.py file to your project
+# Install directly from the repository
+pip install git+https://github.com/emmanuelkasulani/etracer.git
+
+# For development, clone the repository and install in editable mode
+git clone https://github.com/emmanuelkasulani/etracer.git
+cd etracer
+pip install -e .
 ```
 
 ## Quick Start
@@ -25,10 +30,10 @@ fixes.
 ### Basic Usage (No AI)
 
 ```python
-import tracer
+import etracer
 
 # Enable tracer at the start of your script
-tracer.enable()
+etracer.enable()
 
 # Your code here
 # Any uncaught exceptions will be processed by tracer
@@ -37,12 +42,12 @@ tracer.enable()
 ### With AI-Powered Analysis
 
 ```python
-import tracer
+import etracer
 import os
 
 # Configure AI (using environment variable for API key)
 API_KEY = os.environ.get("OPENAI_API_KEY")
-tracer.configure_ai(api_key=API_KEY, model="gpt-3.5-turbo")
+etracer.configure_ai(api_key=API_KEY, model="gpt-3.5-turbo")
 
 # Enable tracer with AI
 tracer.enable(ai_enabled=True)
@@ -56,7 +61,7 @@ tracer.enable(ai_enabled=True)
 ### 1. Global Exception Handler
 
 ```python
-import tracer
+import etracer
 
 # Enable at the start of your script
 tracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
@@ -67,13 +72,13 @@ tracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
 ### 2. Function Decorator
 
 ```python
-import tracer
+import etracer
 
 # Configure as needed
-tracer.enable()
+etracer.enable()
 
 
-@tracer.debug
+@etracer.debug
 def my_function():
     # If this function raises an exception, tracer will handle it
     x = 1 / 0
@@ -82,13 +87,13 @@ def my_function():
 ### 3. Context Manager
 
 ```python
-import tracer
+import etracer
 
 # Configure as needed
-tracer.enable()
+etracer.enable()
 
 # Use context manager for specific code blocks
-with tracer.catch_errors():
+with etracer.catch_errors():
     # Only exceptions in this block will be handled by tracer
     result = "5" + 5  # TypeError
 ```
@@ -96,17 +101,17 @@ with tracer.catch_errors():
 ### 4. Explicit Analysis
 
 ```python
-import tracer
+import etracer
 
 # Configure as needed
-tracer.enable()
+etracer.enable()
 
 try:
     # Your code that might raise an exception
     result = my_list[10]
 except Exception as e:
     # Explicitly analyze this exception
-    tracer.analyze_exception(e)
+    etracer.analyze_exception(e)
 ```
 
 ## Configuration Options
@@ -121,7 +126,7 @@ tracer.enable(
 )
 
 # Configure AI integration
-tracer.configure_ai(
+etracer.configure_ai(
     api_key="your-api-key",  # Required for AI analysis
     model="gpt-3.5-turbo",  # AI model to use
     enabled=True,  # Enable AI analysis
@@ -181,8 +186,9 @@ This is especially useful during development when you might encounter the same e
 
 ## Requirements
 
-- Python 3.6+
-- `requests` library (for API calls)
+- Python 3.8+
+- `pydantic` 2.0+
+- `openai` 1.0+
 - OpenAI API key (for AI-powered analysis)
 
 ## License

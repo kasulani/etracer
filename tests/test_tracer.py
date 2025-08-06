@@ -3,8 +3,16 @@ import unittest
 import sys
 import json
 from typing import Union
-from tracer import Tracer, Frame, DataForAnalysis, AnalysisGetterInterface, AiAnalysis, CacheInterface, CacheData
-from type import NoOpPrinter, NoOpProgressIndicator
+from etracer import (
+    Tracer,
+    Frame,
+    DataForAnalysis,
+    AiAnalysis,
+    CacheData,
+    AnalysisGetterInterface,
+    CacheInterface
+)
+from etracer.utils import NoOpPrinter, NoOpProgressIndicator
 
 
 # Mock classes for testing

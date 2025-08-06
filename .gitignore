@@ -210,3 +210,4 @@ __marimo__/
 /notes
 .tracer_cache
 .claude
+requirements-dev.txt
