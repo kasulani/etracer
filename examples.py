@@ -1,88 +1,75 @@
 """
-Test script for the AI-enhanced tracer module.
-This demonstrates how to use the AI-powered error analysis feature.
+Test script for the tracer module.
+Run this script to see how tracer handles different types of exceptions.
 """
-
 import os
 import etracer
 
-# Configure AI integration (use your own API key)
-# You can also set this via environment variable: export OPENAI_API_KEY="your-api-key"
-API_KEY = os.environ.get("OPENAI_API_KEY", "")
-
-if API_KEY:
-    # Enable tracer with AI integration
-    etracer.configure_ai(api_key=API_KEY, model="gpt-3.5-turbo")
-    etracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
-    print("AI-powered error analysis enabled")
-else:
-    # Enable tracer without AI
-    etracer.enable(verbosity=2, show_locals=True)
-    print("AI analysis disabled (no API key provided)")
-    print("Set the OPENAI_API_KEY environment variable to enable AI analysis")
+AI_MODEL = "gpt-4o-mini"
 
 
-@etracer.debug
-def test_division_by_zero():
-    """Test zero division error with AI analysis"""
-    print("Testing division by zero...")
-    x = 10
-    y = 0
-    result = x / y  # This will raise a ZeroDivisionError
-    return result
+def zero_division():
+    """Test handling of ZeroDivisionError"""
+    print("\nTesting division by zero...")
+    try:
+        x = 10
+        y = 0
+        result = x / y
+        print(f"Result: {result}")  # This should not execute
+    except Exception as e:
+        print("Caught an exception! Using tracer.analyze_exception...")
+        etracer.analyze_exception(e)
 
 
 @etracer.debug
-def test_attribute_error():
-    """Test attribute error with AI analysis"""
-    print("Testing attribute error...")
-    x = 42  # int doesn't have append method
-    x.append(10)  # This will raise an AttributeError
-    return x
-
-
-@etracer.debug
-def test_index_error():
-    """Test index error with AI analysis"""
-    print("Testing index error...")
-    my_list = [1, 2, 3]
-    value = my_list[10]  # This will raise an IndexError
+def decorated_function():
+    """Test the decorator functionality"""
+    print("\nTesting the @etracer.debug decorator...")
+    # This will cause a KeyError
+    my_dict = {"a": 1, "b": 2}
+    value = my_dict["c"]  # This will raise a KeyError
     return value
 
 
-def test_with_context_manager():
-    """Test error handling with context manager"""
-    print("Testing error with context manager...")
-    with etracer.catch_errors():
-        # This will raise a TypeError
-        result = "5" + 5
-        print(f"Result: {result}")  # This line won't execute
+def context_manager():
+    """Test the context manager functionality"""
+    print("\nTesting the context manager...")
+    with etracer.analyzer():
+        # This will cause an AttributeError
+        x = 42
+        x.append(10)  # integers don't have append method
+
+
+def global_handler():
+    """Test the global exception handler"""
+    print("\nTesting the global exception handler...")
+    print("This will trigger the global handler and may exit the program")
+    print("Comment out this test if you want to run the other tests")
+
+    # Cause a deliberate error that will be caught by the global handler
+    undefined_variable = "defined"  # Comment this line out to cause a NameError
+    print(undefined_variable + " is now defined")
 
 
 def main():
-    """Run all tests"""
-    print("\n1. Testing decorator with division by zero")
-    try:
-        test_division_by_zero()
-    except Exception:
-        pass  # Exception is already handled by the decorator
+    """Main function to run all tests"""
+    print("Starting etracer tests...")
 
-    print("\n2. Testing decorator with attribute error")
-    try:
-        test_attribute_error()
-    except Exception:
-        pass  # Exception is already handled by the decorator
+    # Enable the tracer with detailed output
+    etracer.enable(
+        verbosity=2,
+        enable_ai=True,
+        api_key=os.getenv("OPENAI_API_KEY"),
+        model=AI_MODEL,
+    )
 
-    print("\n3. Testing decorator with index error")
-    try:
-        test_index_error()
-    except Exception:
-        pass  # Exception is already handled by the decorator
+    # To run any specific test, uncomment the corresponding function call below
+    # zero_division()
+    # decorated_function()
+    # context_manager()
+    # global_handler()
 
-    print("\n4. Testing context manager")
-    test_with_context_manager()
-
-    print("\nAll tests completed.")
+    print("\nAll tests completed!")
 
 
 if __name__ == "__main__":

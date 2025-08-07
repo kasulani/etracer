@@ -9,9 +9,8 @@ from .tracer import (
     enable,
     disable,
     debug,
-    catch_errors,
+    analyzer,
     analyze_exception,
-    configure_ai,
     set_printer,
 )
 
@@ -29,9 +28,8 @@ __all__ = [
     "enable",
     "disable",
     "debug",
-    "catch_errors",
+    "analyzer",
     "analyze_exception",
-    "configure_ai",
     "set_printer",
     "Frame",
     "DataForAnalysis",

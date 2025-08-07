@@ -45,12 +45,13 @@ etracer.enable()
 import etracer
 import os
 
-# Configure AI (using environment variable for API key)
+# Enable tracer with AI (using environment variable for API key)
 API_KEY = os.environ.get("OPENAI_API_KEY")
-etracer.configure_ai(api_key=API_KEY, model="gpt-3.5-turbo")
-
-# Enable tracer with AI
-etracer.enable(ai_enabled=True)
+etracer.enable(
+    enable_ai=True,
+    api_key=API_KEY,
+    model="gpt-3.5-turbo"
+)
 
 # Your code here
 # Errors will now get AI-powered explanations and fixes
@@ -80,8 +81,8 @@ etracer.enable()
 
 @etracer.debug
 def my_function():
-    # If this function raises an exception, tracer will handle it
-    x = 1 / 0
+  # If this function raises an exception, tracer will handle it
+  x = 1 / 0
 ```
 
 ### 3. Context Manager
@@ -93,9 +94,9 @@ import etracer
 etracer.enable()
 
 # Use context manager for specific code blocks
-with etracer.catch_errors():
-    # Only exceptions in this block will be handled by tracer
-    result = "5" + 5  # TypeError
+with etracer.analyzer():
+  # Only exceptions in this block will be handled by tracer
+  result = "5" + 5  # TypeError
 ```
 
 ### 4. Explicit Analysis
@@ -107,30 +108,25 @@ import etracer
 etracer.enable()
 
 try:
-    # Your code that might raise an exception
-    result = my_list[10]
+  # Your code that might raise an exception
+  result = my_list[10]
 except Exception as e:
-    # Explicitly analyze this exception
-    etracer.analyze_exception(e)
+  # Explicitly analyze this exception
+  etracer.analyze_exception(e)
 ```
 
 ## Configuration Options
 
 ```python
-# Full configuration with defaults
-etracer.enable(
-    verbosity=2,  # 0=minimal, 1=normal, 2=detailed
-    show_locals=True,  # Whether to show local variables
-    ai_enabled=False,  # Whether to use AI for analysis
-    use_cache=False  # Use smart caching for AI responses
-)
+# Basic configuration
+etracer.enable(verbosity=2)
 
-# Configure AI integration
-etracer.configure_ai(
-    api_key="your-api-key",  # Required for AI analysis
-    model="gpt-3.5-turbo",  # AI model to use
-    enabled=True,  # Enable AI analysis
-    use_cache=True  # Cache API responses
+# Configuration with AI enabled
+etracer.enable(
+  verbosity=2,
+  enable_ai=True,
+  api_key="your-api-key",  # Required for AI analysis
+  model="gpt-3.5-turbo"  # AI model to use
 )
 ```
 

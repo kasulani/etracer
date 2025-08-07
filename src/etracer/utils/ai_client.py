@@ -5,8 +5,8 @@ AI client implementation for etracer.
 import json
 from typing import Optional
 
-# Type ignore for openai import because mypy cannot find the module
-from openai import OpenAI  # type: ignore
+# Import OpenAI client
+from openai import OpenAI
 from ..models import AiAnalysis
 from ..interfaces import AnalysisGetterInterface
 
@@ -106,4 +106,7 @@ class AIClient(AnalysisGetterInterface):
             timeout=self.config.timeout,
         )
 
-        return AiAnalysis.model_validate(json.loads(response.choices[0].message.content))
+        content = response.choices[0].message.content
+        if content is None:
+            raise ValueError("AI response content is None")
+        return AiAnalysis.model_validate(json.loads(content))

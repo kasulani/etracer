@@ -111,6 +111,10 @@ class Tracer:
         Args:
             exception: The caught exception
         """
+        if not self.enabled:
+            self.original_excepthook(type(exception), exception, exception.__traceback__)
+            return
+
         self._format_exception(type(exception), exception, exception.__traceback__)
 
     def debug(self, func: Callable) -> Callable:
@@ -128,34 +132,32 @@ class Tracer:
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                self._format_exception(type(e), e, e.__traceback__)
-                # Re-raise the exception if needed
-                # raise
+                self.analyze_exception(e)
 
         return wrapper
 
-    def catch_errors(self) -> Any:
+    def analyzer(self) -> Any:
         """Context manager to catch and format exceptions."""
 
-        class ErrorCatcher:
+        class ExceptionAnalyzer:
             def __init__(self, tracer: "Tracer") -> None:
                 self.tracer = tracer
 
-            def __enter__(self) -> "ErrorCatcher":
+            def __enter__(self) -> "ExceptionAnalyzer":
                 return self
 
             def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> bool:
                 if exc_type is not None:
-                    self.tracer._format_exception(exc_type, exc_value, exc_traceback)
+                    self.tracer.exception_handler(exc_type, exc_value, exc_traceback)
                     return True  # Suppress the exception
                 return False
 
-        return ErrorCatcher(self)
+        return ExceptionAnalyzer(self)
 
     def enable(
         self,
         verbosity: int = 2,
-        ai_enabled: bool = False,
+        enable_ai: bool = False,
         api_key: Optional[str] = None,
         model: Optional[str] = None,
     ) -> None:
@@ -164,12 +166,12 @@ class Tracer:
 
         Args:
             verbosity: How much detail to show (0=minimal, 1=normal, 2=detailed)
-            ai_enabled: Whether to use AI for error analysis
+            enable_ai: Whether to use AI for error analysis
             api_key: OpenAI API key for AI analysis
             model: AI model to use for analysis
         """
         if not self.enabled:
-            sys.excepthook = self._exception_handler
+            sys.excepthook = self.exception_handler
             self.enabled = True
             self.verbosity = verbosity if verbosity in (0, 1, 2) else 2
             self.show_locals = True if self.verbosity == 2 else False
@@ -178,12 +180,12 @@ class Tracer:
             if hasattr(self._printer, "set_verbosity"):
                 self._printer.set_verbosity(self.verbosity)
 
-            if ai_enabled:
+            if enable_ai:
                 self.ai_config.configure(
                     api_key=api_key,
                     model=model,
                     enabled=True,
-                    use_cache=True if ai_enabled else False,
+                    use_cache=True if enable_ai else False,
                 )
                 self._printer.print(
                     f"{Colors.GREEN}Tracer enabled: Enhanced stack traces with AI analysis"
@@ -204,7 +206,7 @@ class Tracer:
                 f"{Colors.BLUE}Tracer disabled: Standard stack traces restored{Colors.ENDC}\n"
             )
 
-    def _exception_handler(
+    def exception_handler(
         self,
         exc_type: Type[BaseException],
         exc_value: BaseException,
@@ -218,6 +220,10 @@ class Tracer:
             exc_value: The exception value/message
             exc_traceback: The traceback object
         """
+        if not self.enabled:
+            self.original_excepthook(exc_type, exc_value, exc_traceback)
+            return
+
         self._format_exception(exc_type, exc_value, exc_traceback)
 
     def _format_exception(
@@ -568,18 +574,11 @@ _tracer = Tracer(printer=ConsolePrinter())
 enable = _tracer.enable
 disable = _tracer.disable
 debug = _tracer.debug
-catch_errors = _tracer.catch_errors
+analyzer = _tracer.analyzer
 analyze_exception = _tracer.analyze_exception
 
 
 # Allow custom printers to be injected
 def set_printer(printer: PrinterInterface) -> None:
     """Set a custom printer for the tracer."""
-    global _tracer
     _tracer._printer = printer
-
-
-# Additional public API for AI configuration
-def configure_ai(api_key: str, model: str, enabled: bool = True, use_cache: bool = True) -> None:
-    """Configure the AI integration."""
-    _tracer.ai_config.configure(api_key=api_key, model=model, enabled=enabled, use_cache=use_cache)
