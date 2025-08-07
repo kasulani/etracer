@@ -7,7 +7,7 @@ fixes.
 
 - **Enhanced Stack Traces with color**: Clearer, more readable stack traces with proper formatting and syntax
   highlighting
-- **AI-Powered Analysis**: Uses OpenAI's API to analyze errors and provide smart explanations
+- **AI-Powered Analysis**: Uses OpenAI-compatible APIs to analyze errors and provide smart explanations
 - **Smart Fix Suggestions**: Get AI-generated suggestions for fixing the issues
 - **Multiple Usage Modes**: Decorator, context manager, and global exception handler
 - **Local Variable Inspection**: See the values of local variables at the point of error
@@ -81,8 +81,8 @@ etracer.enable()
 
 @etracer.debug
 def my_function():
-  # If this function raises an exception, tracer will handle it
-  x = 1 / 0
+    # If this function raises an exception, tracer will handle it
+    x = 1 / 0
 ```
 
 ### 3. Context Manager
@@ -95,8 +95,8 @@ etracer.enable()
 
 # Use context manager for specific code blocks
 with etracer.analyzer():
-  # Only exceptions in this block will be handled by tracer
-  result = "5" + 5  # TypeError
+    # Only exceptions in this block will be handled by tracer
+    result = "5" + 5  # TypeError
 ```
 
 ### 4. Explicit Analysis
@@ -105,28 +105,31 @@ with etracer.analyzer():
 import etracer
 
 # Configure as needed
-etracer.enable()
+etracer.enable(
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
+)
 
 try:
-  # Your code that might raise an exception
-  result = my_list[10]
+    x = 10
+    y = 0
+    result = x / y
 except Exception as e:
-  # Explicitly analyze this exception
-  etracer.analyze_exception(e)
+    # Explicitly analyze this exception
+    etracer.analyze_exception(e)
 ```
 
 ## Configuration Options
 
 ```python
 # Basic configuration
-etracer.enable(verbosity=2)
-
-# Configuration with AI enabled
 etracer.enable(
-  verbosity=2,
-  enable_ai=True,
-  api_key="your-api-key",  # Required for AI analysis
-  model="gpt-3.5-turbo"  # AI model to use
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
 )
 ```
 
@@ -180,12 +183,38 @@ rm -rf .tracer_cache
 
 This is especially useful during development when you might encounter the same errors repeatedly while fixing issues.
 
+### Future Cache Management
+
+Future versions will include more advanced cache management features such as automatic pruning to keep the cache size
+manageable. These features will help maintain optimal performance and disk usage over extended periods of development.
+
+## AI Integration
+
+eTracer uses the OpenAI client library to connect to AI models that support the OpenAI API format. This means it's
+compatible with:
+
+- OpenAI models (GPT-3.5, GPT-4, etc.)
+- Compatible third-party services that implement the OpenAI API (Anthropic Claude, Cohere, etc.)
+- Self-hosted models with OpenAI-compatible APIs (LM Studio, Ollama, etc.)
+
+By default, etracer uses the OpenAI URL `https://api.openai.com/v1` as base URL and `gpt-3.5-turbo` as the default
+model. To use a different provider (base URL and model), update the configuration in your code:
+
+```python
+# For using Azure OpenAI
+etracer.enable(
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
+)
+```
+
 ## Requirements
 
 - Python 3.8+
 - `pydantic` 2.0+
 - `openai` 1.0+
-- OpenAI API key (for AI-powered analysis)
 
 ## Development
 
@@ -230,18 +259,19 @@ make all
 
 The following Make commands are available:
 
-| Command | Description |
-|---------|-------------|
-| `make help` | Show available commands |
-| `make install` | Install the package |
-| `make dev-install` | Install in development mode with dev dependencies |
-| `make format` | Format code with Black |
-| `make lint` | Run linting with Flake8 |
-| `make typecheck` | Run type checking with MyPy |
-| `make test` | Run unit tests |
-| `make test-coverage` | Run tests with coverage reporting |
-| `make clean` | Remove build artifacts |
-| `make all` | Run format, lint, typecheck, and test |
+| Command              | Description                                       |
+|----------------------|---------------------------------------------------|
+| `make help`          | Show available commands                           |
+| `make install`       | Install the package                               |
+| `make dev-install`   | Install in development mode with dev dependencies |
+| `make format`        | Format code with Black                            |
+| `make lint`          | Run linting with Flake8                           |
+| `make typecheck`     | Run type checking with MyPy                       |
+| `make test`          | Run unit tests                                    |
+| `make test-coverage` | Run tests with coverage reporting                 |
+| `make clean`         | Remove build artifacts                            |
+| `make all`           | Run format, lint, typecheck, and test             |
 
 ## License
+
 Apache License 2.0, see LICENSE for more details.

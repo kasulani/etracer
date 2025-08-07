@@ -12,7 +12,6 @@ from ..interfaces import AnalysisGetterInterface
 
 # API configuration
 _DEFAULT_BASE_URL = "https://api.openai.com/v1"
-_DEFAULT_API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 _DEFAULT_MODEL = "gpt-3.5-turbo"
 _DEFAULT_TIMEOUT = 30  # seconds
 _TEMPERATURE = 0.3  # Controls randomness in AI responses
@@ -23,7 +22,6 @@ class AIConfig:
 
     def __init__(self) -> None:
         self.api_key: Optional[str] = None  # OpenAI API key
-        self.api_endpoint: str = _DEFAULT_API_ENDPOINT  # Default API endpoint for AI requests
         self.model: str = _DEFAULT_MODEL  # Default AI model to use
         self.timeout: int = _DEFAULT_TIMEOUT  # Timeout for AI requests in seconds
         self.enabled: bool = False  # Whether AI integration is enabled
@@ -34,7 +32,6 @@ class AIConfig:
         self,
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
-        api_endpoint: Optional[str] = None,
         model: Optional[str] = None,
         timeout: Optional[int] = None,
         enabled: Optional[bool] = None,
@@ -45,8 +42,6 @@ class AIConfig:
             self.api_key = api_key
         if base_url is not None:
             self.base_url = base_url
-        if api_endpoint is not None:
-            self.api_endpoint = api_endpoint
         if model is not None:
             self.model = model
         if timeout is not None:

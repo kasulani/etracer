@@ -64,7 +64,7 @@ def main():
     )
 
     # To run any specific test, uncomment the corresponding function call below
-    # zero_division()
+    zero_division()
     # decorated_function()
     # context_manager()
     # global_handler()
