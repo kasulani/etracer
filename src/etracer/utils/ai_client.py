@@ -5,7 +5,8 @@ AI client implementation for etracer.
 import json
 from typing import Optional
 
-from openai import OpenAI
+# Type ignore for openai import because mypy cannot find the module
+from openai import OpenAI  # type: ignore
 from ..models import AiAnalysis
 from ..interfaces import AnalysisGetterInterface
 
@@ -31,13 +32,13 @@ class AIConfig:
 
     def configure(
         self,
-        api_key: str = None,
-        base_url: str = None,
-        api_endpoint: str = None,
-        model: str = None,
-        timeout: int = None,
-        enabled: bool = None,
-        use_cache: bool = None,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        api_endpoint: Optional[str] = None,
+        model: Optional[str] = None,
+        timeout: Optional[int] = None,
+        enabled: Optional[bool] = None,
+        use_cache: Optional[bool] = None,
     ) -> None:
         """Configure the AI settings."""
         if api_key is not None:

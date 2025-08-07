@@ -124,7 +124,7 @@ class Tracer:
             Wrapped function with exception handling
         """
 
-        def wrapper(*args, **kwargs):
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 return func(*args, **kwargs)
             except Exception as e:
@@ -134,17 +134,17 @@ class Tracer:
 
         return wrapper
 
-    def catch_errors(self):
+    def catch_errors(self) -> Any:
         """Context manager to catch and format exceptions."""
 
         class ErrorCatcher:
-            def __init__(self, tracer):
+            def __init__(self, tracer: "Tracer") -> None:
                 self.tracer = tracer
 
-            def __enter__(self):
+            def __enter__(self) -> "ErrorCatcher":
                 return self
 
-            def __exit__(self, exc_type, exc_value, exc_traceback):
+            def __exit__(self, exc_type: Any, exc_value: Any, exc_traceback: Any) -> bool:
                 if exc_type is not None:
                     self.tracer._format_exception(exc_type, exc_value, exc_traceback)
                     return True  # Suppress the exception
@@ -271,7 +271,7 @@ class Tracer:
         self,
         exc_type: Type[BaseException],
         exc_value: BaseException,
-    ):
+    ) -> None:
         """
         Create a structured representation of the error data for AI analysis.
 
@@ -290,7 +290,10 @@ class Tracer:
         )
 
     def _get_last_frame(self) -> Frame:
-        return self._traceback_frames[-1] if self._traceback_frames else {}
+        # Create empty frame if no frames exist
+        if not self._traceback_frames:
+            return Frame(filename="", lineno=0, function="", lines=[], code_snippet="", locals={})
+        return self._traceback_frames[-1]
 
     def _get_ai_analysis(self) -> AiAnalysis:
         """
@@ -300,18 +303,26 @@ class Tracer:
             Dictionary with explanation and suggested fix
         """
         cache_key = self._create_hash_key()
-        exists = self._read_from_cache(cache_key)
+        exists = self._read_from_cache(cache_key) if self._caching_is_enabled() else None
         if exists:
             return exists
 
-        self._progress_indicator.start()
+        if self._progress_indicator is not None:
+            self._progress_indicator.start()
+
         try:
             with Timer(auto_print=False) as timer:
+                if self._ai_client is None:
+                    raise ValueError("AI client is not initialized")
+
                 analysis = self._ai_client.get_analysis(
                     system_prompt=self._system_prompt,
                     user_prompt=self._get_user_prompt(),
                 )
-            self._progress_indicator.stop()
+
+            if self._progress_indicator is not None:
+                self._progress_indicator.stop()
+
             self._printer.print(
                 f"{Colors.CYAN}AI Analysis completed in {timer.elapsed():.2f}s{Colors.ENDC}\n"
             )
@@ -338,7 +349,7 @@ class Tracer:
         Returns:
             None
         """
-        if self._caching_is_enabled():
+        if self._caching_is_enabled() and self._cache is not None:
             self._printer.print(
                 f"{Colors.CYAN}Caching AI response with key {key}{Colors.ENDC}\n", 2
             )
@@ -351,11 +362,12 @@ class Tracer:
                         suggested_fix=analysis.suggested_fix,
                     ),
                 )
+                return
             except Exception as e:  # todo: Return a custom exception for cache errors
                 self._printer.print(
                     f"{Colors.FAIL}Failed to write to cache: {str(e)}{Colors.ENDC}", 0
                 )
-                pass
+                return
 
     def _read_from_cache(self, key: str) -> Union[AiAnalysis, None]:
         """
@@ -368,7 +380,11 @@ class Tracer:
         """
         try:
             with Timer(message="Finished reading from cache"):
-                data = self._cache.get(key) if self._caching_is_enabled() else None
+                data = (
+                    self._cache.get(key)
+                    if (self._caching_is_enabled() and self._cache is not None)
+                    else None
+                )
                 if data:
                     self._printer.print(
                         f"{Colors.CYAN}Using cached AI response with key {key}{Colors.ENDC}\n", 2
@@ -382,12 +398,12 @@ class Tracer:
             )
         return None
 
-    def _print_stack_trace_frames(self):
+    def _print_stack_trace_frames(self) -> None:
         self._printer.print(f"{Colors.BOLD}Stack Trace: (most recent call last){Colors.ENDC}\n", 0)
         for i, frame in enumerate(self._traceback_frames):
             self._print_frame(i + 1, len(self._traceback_frames), frame)
 
-    def _extract_traceback_frames(self, tb: Optional[TracebackType]):
+    def _extract_traceback_frames(self, tb: Optional[TracebackType]) -> None:
         """
         Extract useful information from the traceback frames.
 
@@ -466,6 +482,10 @@ class Tracer:
         print()  # Add a blank line between frames
 
     def _create_hash_key(self) -> str:
+        # Ensure data_for_analysis exists before using it
+        if not self._data_for_analysis:
+            return "no_data_available"
+
         _key_str = f"""
         {self._data_for_analysis.exception_type}:
         {self._data_for_analysis.exception_message}:
@@ -477,6 +497,10 @@ class Tracer:
         return error_hash
 
     def _get_user_prompt(self) -> str:
+        # Ensure data_for_analysis exists before using it
+        if not self._data_for_analysis:
+            return "Error: No analysis data available."
+
         return f"""
         Error analysis request. Please analyze this Python error and provide:
         1. A clear explanation of what's happening
@@ -523,14 +547,14 @@ class Tracer:
             return f"<unprintable value of type {type(value).__name__}>: {str(e)}"
 
     @staticmethod
-    def _print_header(exc_type, exc_value):
+    def _print_header(exc_type: Type[BaseException], exc_value: BaseException) -> None:
         header = f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
         header += f"{Colors.FAIL}{Colors.BOLD} {exc_type.__name__}: {exc_value}{Colors.ENDC}\n"
         header += f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
         print(header)
 
     @staticmethod
-    def _print_footer():
+    def _print_footer() -> None:
         footer = f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
         footer += f"{Colors.FAIL}{Colors.BOLD}End of Traceback{Colors.ENDC}\n"
         footer += f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"

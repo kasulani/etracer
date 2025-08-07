@@ -3,6 +3,7 @@ Timer utilities for etracer.
 """
 
 import time
+from typing import Any
 from .printer import Colors
 from ..interfaces import TimerInterface
 
@@ -37,7 +38,7 @@ class Timer(TimerInterface):
         self._running = True
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type: Any, exc_value: Any, traceback: Any) -> None:
         """
         Stop the timer when exiting the context.
         """

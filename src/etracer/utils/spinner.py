@@ -18,7 +18,7 @@ _THREAD_TIME_OUT = 0.5  # seconds for spinner thread to stop gracefully
 class NoOpProgressIndicator(ProgressIndicatorInterface):
     """No-op progress indicator that does nothing."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the no-op progress indicator."""
         pass
 
@@ -50,7 +50,7 @@ class Spinner(ProgressIndicatorInterface):
         self._message: str = message
         self._sleep: float = 0.1
 
-    def _spin_worker(self):
+    def _spin_worker(self) -> None:
         spinner = itertools.cycle(["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"])
         start_time = time.time()
         while not self._stop_event.is_set():

@@ -5,7 +5,7 @@ Cache implementations for etracer.
 import os
 import time
 import json
-from typing import Union
+from typing import Union, Optional
 
 from ..models import CacheData
 from ..interfaces import CacheInterface
@@ -22,7 +22,7 @@ class CacheConfig:
         self.ttl: int = _CACHE_TTL  # Time-to-live for cache entries in seconds
         self.use_cache: bool = True  # Whether to use caching for AI responses
 
-    def configure(self, cache_ttl: int = None, use_cache: bool = None) -> None:
+    def configure(self, cache_ttl: Optional[int] = None, use_cache: Optional[bool] = None) -> None:
         """Configure the cache settings."""
         if cache_ttl is not None:
             self.ttl = cache_ttl
