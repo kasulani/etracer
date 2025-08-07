@@ -1,4 +1,4 @@
-.PHONY: help clean install dev-install format lint typecheck test test-coverage all
+.PHONY: help clean install dev-install format lint typecheck test test-coverage docs docs-html docs-clean all
 
 PACKAGE_NAME = etracer
 PYTHON = python
@@ -17,6 +17,9 @@ help:
 	@echo "  make test-coverage   - Run tests with coverage report"
 	@echo "  make clean           - Remove build artifacts"
 	@echo "  make all             - Run format, lint, typecheck, and test"
+	@echo "  make docs            - Build all documentation formats"
+	@echo "  make docs-html       - Build HTML documentation"
+	@echo "  make docs-clean      - Clean documentation build files"
 
 clean:
 	rm -rf build/
@@ -50,5 +53,21 @@ test:
 
 test-coverage:
 	$(PYTEST) --cov=$(PACKAGE_NAME) --cov-report=term --cov-report=html tests/
+
+docs-clean:
+	rm -rf docs/_build
+
+# Install Sphinx and required theme if not already installed
+docs-deps:
+	$(PIP) install sphinx sphinx-rtd-theme
+
+docs-html: docs-deps
+	cd docs && $(MAKE) html
+
+docs: docs-html
+
+# Open the documentation in the default browser
+docs-open: docs-html
+	open docs/_build/html/index.html
 
 all: format lint typecheck test
