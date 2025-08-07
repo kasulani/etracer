@@ -1,6 +1,7 @@
 """
 Cache implementations for etracer.
 """
+
 import os
 import time
 import json
@@ -17,11 +18,11 @@ _CACHE_TTL = 86400  # Time-to-live in seconds (24 hours)
 class CacheConfig:
     """Configuration for cache settings."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.ttl: int = _CACHE_TTL  # Time-to-live for cache entries in seconds
         self.use_cache: bool = True  # Whether to use caching for AI responses
 
-    def configure(self, cache_ttl=None, use_cache=None) -> None:
+    def configure(self, cache_ttl: int = None, use_cache: bool = None) -> None:
         """Configure the cache settings."""
         if cache_ttl is not None:
             self.ttl = cache_ttl
@@ -49,7 +50,7 @@ class FileBasedCache(CacheInterface):
             value: The value to cache
         """
         cache_file = os.path.join(self._cache_dir, f"{key}.json")
-        with open(cache_file, 'w') as f:
+        with open(cache_file, "w") as f:
             json.dump(value.model_dump(), f)
 
     def get(self, key: str) -> Union[CacheData, None]:
@@ -66,7 +67,7 @@ class FileBasedCache(CacheInterface):
         if not os.path.exists(cache_file):
             return None
 
-        with open(cache_file, 'r') as f:
+        with open(cache_file, "r") as f:
             data = CacheData.model_validate(json.load(f))
 
         if time.time() - data.timestamp > self._ttl:

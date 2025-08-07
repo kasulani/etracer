@@ -50,7 +50,7 @@ API_KEY = os.environ.get("OPENAI_API_KEY")
 etracer.configure_ai(api_key=API_KEY, model="gpt-3.5-turbo")
 
 # Enable tracer with AI
-tracer.enable(ai_enabled=True)
+etracer.enable(ai_enabled=True)
 
 # Your code here
 # Errors will now get AI-powered explanations and fixes
@@ -64,7 +64,7 @@ tracer.enable(ai_enabled=True)
 import etracer
 
 # Enable at the start of your script
-tracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
+etracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
 
 # All uncaught exceptions will be handled by tracer
 ```
@@ -118,7 +118,7 @@ except Exception as e:
 
 ```python
 # Full configuration with defaults
-tracer.enable(
+etracer.enable(
     verbosity=2,  # 0=minimal, 1=normal, 2=detailed
     show_locals=True,  # Whether to show local variables
     ai_enabled=False,  # Whether to use AI for analysis
@@ -170,7 +170,7 @@ else:
 
 ## Caching System
 
-Tracer includes a smart caching system for AI-powered analysis to reduce API costs and improve performance:
+Tracer includes a caching system for AI-powered analysis to reduce API costs and improve performance:
 
 - **Cache Location**: A `.tracer_cache` directory in your project's root folder
 - **What's Cached**: AI responses for specific error patterns to avoid redundant API calls
@@ -190,6 +190,62 @@ This is especially useful during development when you might encounter the same e
 - `pydantic` 2.0+
 - `openai` 1.0+
 - OpenAI API key (for AI-powered analysis)
+
+## Development
+
+### Setup Development Environment
+
+To set up the development environment:
+
+```bash
+# Clone the repository
+git clone https://github.com/emmanuelkasulani/etracer.git
+cd etracer
+
+# Install development dependencies
+pip install -e ".[dev]"
+```
+
+### Code Quality Tools
+
+The project uses several code quality tools that can be run via Make commands:
+
+```bash
+# Format code with Black
+make format
+
+# Run linting with Flake8
+make lint
+
+# Run type checking with MyPy
+make typecheck
+
+# Run unit tests with pytest
+make test
+
+# Run tests with coverage report
+make test-coverage
+
+# Run all quality checks (format, lint, typecheck, test)
+make all
+```
+
+### Makefile Commands
+
+The following Make commands are available:
+
+| Command | Description |
+|---------|-------------|
+| `make help` | Show available commands |
+| `make install` | Install the package |
+| `make dev-install` | Install in development mode with dev dependencies |
+| `make format` | Format code with Black |
+| `make lint` | Run linting with Flake8 |
+| `make typecheck` | Run type checking with MyPy |
+| `make test` | Run unit tests |
+| `make test-coverage` | Run tests with coverage reporting |
+| `make clean` | Remove build artifacts |
+| `make all` | Run format, lint, typecheck, and test |
 
 ## License
 Apache License 2.0, see LICENSE for more details.

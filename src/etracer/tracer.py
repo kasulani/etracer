@@ -28,6 +28,7 @@ Usage:
     except Exception as e:
         etracer.analyze_exception(e)
 """
+
 import sys
 import os
 import linecache
@@ -40,12 +41,20 @@ from typing import Any, List, Optional, Type, Callable, Union
 
 from .models import Frame, DataForAnalysis, AiAnalysis, CacheData
 from .interfaces import (
-    AnalysisGetterInterface, CacheInterface, PrinterInterface,
-    ProgressIndicatorInterface
+    AnalysisGetterInterface,
+    CacheInterface,
+    PrinterInterface,
+    ProgressIndicatorInterface,
 )
 from .utils import (
-    FileBasedCache, CacheConfig, AIConfig, AIClient,
-    Colors, ConsolePrinter, Spinner, Timer,
+    FileBasedCache,
+    CacheConfig,
+    AIConfig,
+    AIClient,
+    Colors,
+    ConsolePrinter,
+    Spinner,
+    Timer,
 )
 
 # Constants
@@ -56,34 +65,44 @@ class Tracer:
     """Main tracer class that handles exception interception and formatting."""
 
     def __init__(
-            self,
-            ai_client: Optional[AnalysisGetterInterface] = None,
-            printer: Optional[PrinterInterface] = None,
-            cache: Optional[CacheInterface] = None,
-            progress_indicator: Optional[ProgressIndicatorInterface] = None,
+        self,
+        ai_client: Optional[AnalysisGetterInterface] = None,
+        printer: Optional[PrinterInterface] = None,
+        cache: Optional[CacheInterface] = None,
+        progress_indicator: Optional[ProgressIndicatorInterface] = None,
     ):
         # Store the original excepthook
         self.original_excepthook = sys.excepthook
         self.enabled: bool = False  # Whether the tracer is currently enabled
         self.verbosity: int = 2  # Default verbosity level (0=minimal, 1=normal, 2=detailed)
-        self.show_locals: bool = True if self.verbosity == 2 else False  # Show local variables if verbosity is high
+        self.show_locals: bool = (
+            True if self.verbosity == 2 else False
+        )  # Show local variables if verbosity is high
         self.ai_config = AIConfig()  # AI integration configuration
         self._traceback_frames: List[Frame] = []  # Store traceback frames for analysis
         self._data_for_analysis: Optional[DataForAnalysis] = None  # Store data for AI analysis
         self._system_prompt: str = """
-        You are an expert Python developer helping with debugging. 
+        You are an expert Python developer helping with debugging.
         Provide clear, concise explanations of errors and practical suggestions for fixing them.
         """
         # dependency injection
-        self._ai_client: Optional[AnalysisGetterInterface] = ai_client if ai_client is not None else AIClient(
-            config=self.ai_config)
-        self._cache: Optional[CacheInterface] = cache if cache is not None else FileBasedCache(CacheConfig())
-        self._progress_indicator: Optional[
-            ProgressIndicatorInterface] = progress_indicator if progress_indicator is not None else Spinner(
-            stop_event=threading.Event(),
-            message="AI Analysis running...",
+        self._ai_client: Optional[AnalysisGetterInterface] = (
+            ai_client if ai_client is not None else AIClient(config=self.ai_config)
         )
-        self._printer: PrinterInterface = printer if printer is not None else ConsolePrinter(verbosity=self.verbosity)
+        self._cache: Optional[CacheInterface] = (
+            cache if cache is not None else FileBasedCache(CacheConfig())
+        )
+        self._progress_indicator: Optional[ProgressIndicatorInterface] = (
+            progress_indicator
+            if progress_indicator is not None
+            else Spinner(
+                stop_event=threading.Event(),
+                message="AI Analysis running...",
+            )
+        )
+        self._printer: PrinterInterface = (
+            printer if printer is not None else ConsolePrinter(verbosity=self.verbosity)
+        )
 
     def analyze_exception(self, exception: Exception) -> None:
         """
@@ -134,11 +153,11 @@ class Tracer:
         return ErrorCatcher(self)
 
     def enable(
-            self,
-            verbosity: int = 2,
-            ai_enabled: bool = False,
-            api_key: Optional[str] = None,
-            model: Optional[str] = None,
+        self,
+        verbosity: int = 2,
+        ai_enabled: bool = False,
+        api_key: Optional[str] = None,
+        model: Optional[str] = None,
     ) -> None:
         """
         Enable the tracer by replacing the default excepthook.
@@ -156,7 +175,7 @@ class Tracer:
             self.show_locals = True if self.verbosity == 2 else False
 
             # Update printer's verbosity level
-            if hasattr(self._printer, 'set_verbosity'):
+            if hasattr(self._printer, "set_verbosity"):
                 self._printer.set_verbosity(self.verbosity)
 
             if ai_enabled:
@@ -167,23 +186,27 @@ class Tracer:
                     use_cache=True if ai_enabled else False,
                 )
                 self._printer.print(
-                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces with AI analysis activated{Colors.ENDC}\n")
+                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces with AI analysis activated{Colors.ENDC}\n"
+                )
             else:
                 self._printer.print(
-                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces activated (AI disabled){Colors.ENDC}\n")
+                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces activated (AI disabled){Colors.ENDC}\n"
+                )
 
     def disable(self) -> None:
         """Disable the tracer and restore the original excepthook."""
         if self.enabled:
             sys.excepthook = self.original_excepthook
             self.enabled = False
-            self._printer.print(f"{Colors.BLUE}Tracer disabled: Standard stack traces restored{Colors.ENDC}\n")
+            self._printer.print(
+                f"{Colors.BLUE}Tracer disabled: Standard stack traces restored{Colors.ENDC}\n"
+            )
 
     def _exception_handler(
-            self,
-            exc_type: Type[BaseException],
-            exc_value: BaseException,
-            exc_traceback: Optional[TracebackType],
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: Optional[TracebackType],
     ) -> None:
         """
         Custom exception handler to replace sys.excepthook.
@@ -196,10 +219,10 @@ class Tracer:
         self._format_exception(exc_type, exc_value, exc_traceback)
 
     def _format_exception(
-            self,
-            exc_type: Type[BaseException],
-            exc_value: BaseException,
-            exc_traceback: Optional[TracebackType],
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: Optional[TracebackType],
     ) -> None:
         """
         Format and print an exception in a more readable way.
@@ -221,23 +244,29 @@ class Tracer:
             except Exception as e:
                 # Fallback to basic analysis if AI fails
                 self._printer.print(
-                    f"{Colors.FAIL}\nAI analysis failed: {e}\nFalling back to basic analysis.{Colors.ENDC}")
+                    f"{Colors.FAIL}\nAI analysis failed: {e}\nFalling back to basic analysis.{Colors.ENDC}"
+                )
                 return
         else:
             self._printer.print(
-                f"{Colors.WARNING}AI analysis is disabled or API key not provided.{Colors.ENDC}\n")
+                f"{Colors.WARNING}AI analysis is disabled or API key not provided.{Colors.ENDC}\n"
+            )
             return
 
-        self._printer.print(f"\n{Colors.BLUE}{Colors.BOLD}Analysis:{Colors.ENDC}\n{ai_analysis.explanation}", 0)
         self._printer.print(
-            f"\n{Colors.GREEN}{Colors.BOLD}Suggested Fix:{Colors.ENDC}\n{ai_analysis.suggested_fix}\n", 0)
+            f"\n{Colors.BLUE}{Colors.BOLD}Analysis:{Colors.ENDC}\n{ai_analysis.explanation}", 0
+        )
+        self._printer.print(
+            f"\n{Colors.GREEN}{Colors.BOLD}Suggested Fix:{Colors.ENDC}\n{ai_analysis.suggested_fix}\n",
+            0,
+        )
 
         self._print_footer()
 
     def _create_data_for_analysis(
-            self,
-            exc_type: Type[BaseException],
-            exc_value: BaseException,
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
     ):
         """
         Create a structured representation of the error data for AI analysis.
@@ -253,7 +282,7 @@ class Tracer:
             exception_type=exc_type.__name__,
             exception_message=str(exc_value),
             frames=self._traceback_frames,
-            most_relevant_frame=self._get_last_frame()
+            most_relevant_frame=self._get_last_frame(),
         )
 
     def _get_last_frame(self) -> Frame:
@@ -279,7 +308,9 @@ class Tracer:
                     user_prompt=self._get_user_prompt(),
                 )
             self._progress_indicator.stop()
-            self._printer.print(f"{Colors.CYAN}AI Analysis completed in {timer.elapsed():.2f}s{Colors.ENDC}\n")
+            self._printer.print(
+                f"{Colors.CYAN}AI Analysis completed in {timer.elapsed():.2f}s{Colors.ENDC}\n"
+            )
             self._write_to_cache(analysis, cache_key)
 
             return analysis
@@ -289,7 +320,7 @@ class Tracer:
 
             return AiAnalysis(
                 explanation=f"AI analysis failed: {str(e)}.",
-                suggested_fix="Unable to provide AI-powered suggestions due to an error."
+                suggested_fix="Unable to provide AI-powered suggestions due to an error.",
             )
 
     def _write_to_cache(self, analysis: AiAnalysis, key: str) -> None:
@@ -305,19 +336,21 @@ class Tracer:
         """
         if self._caching_is_enabled():
             self._printer.print(
-                f"{Colors.CYAN}Caching AI response with key {key}{Colors.ENDC}\n", 2)
+                f"{Colors.CYAN}Caching AI response with key {key}{Colors.ENDC}\n", 2
+            )
             try:
                 self._cache.set(
                     key=key,
                     value=CacheData(
                         timestamp=time.time(),
                         explanation=analysis.explanation,
-                        suggested_fix=analysis.suggested_fix
-                    )
+                        suggested_fix=analysis.suggested_fix,
+                    ),
                 )
             except Exception as e:  # todo: Return a custom exception for cache errors
                 self._printer.print(
-                    f"{Colors.FAIL}Failed to write to cache: {str(e)}{Colors.ENDC}", 0)
+                    f"{Colors.FAIL}Failed to write to cache: {str(e)}{Colors.ENDC}", 0
+                )
                 pass
 
     def _read_from_cache(self, key: str) -> Union[AiAnalysis, None]:
@@ -334,11 +367,15 @@ class Tracer:
                 data = self._cache.get(key) if self._caching_is_enabled() else None
                 if data:
                     self._printer.print(
-                        f"{Colors.CYAN}Using cached AI response with key {key}{Colors.ENDC}\n", 2)
-                    return AiAnalysis(explanation=data.explanation, suggested_fix=data.suggested_fix)
+                        f"{Colors.CYAN}Using cached AI response with key {key}{Colors.ENDC}\n", 2
+                    )
+                    return AiAnalysis(
+                        explanation=data.explanation, suggested_fix=data.suggested_fix
+                    )
         except Exception as e:  # todo: Return a custom exception for cache errors
             self._printer.print(
-                f"\n{Colors.FAIL}Failed to read from cache: {str(e)}.{Colors.ENDC}\n", 0)
+                f"\n{Colors.FAIL}Failed to read from cache: {str(e)}.{Colors.ENDC}\n", 0
+            )
         return None
 
     def _print_stack_trace_frames(self):
@@ -374,14 +411,18 @@ class Tracer:
                         lines.append((i, line.rstrip()))
 
             # Add to frames list
-            frames.append(Frame.model_validate({
-                'filename': filename,
-                'lineno': lineno,
-                'function': function,
-                'lines': lines,
-                'code_snippet': '\n'.join([f"{ln}: {lc}" for ln, lc in lines]),
-                'locals': {k: self._format_value(v) for k, v in frame.f_locals.items()}
-            }))
+            frames.append(
+                Frame.model_validate(
+                    {
+                        "filename": filename,
+                        "lineno": lineno,
+                        "function": function,
+                        "lines": lines,
+                        "code_snippet": "\n".join([f"{ln}: {lc}" for ln, lc in lines]),
+                        "locals": {k: self._format_value(v) for k, v in frame.f_locals.items()},
+                    }
+                )
+            )
 
             current = current.tb_next
         self._traceback_frames = frames  # Store for AI analysis
@@ -399,7 +440,7 @@ class Tracer:
 
         # Frame header
         self._printer.print(f"Frame{Colors.BLUE}{Colors.BOLD}[{index}/{total}]{Colors.ENDC}, ", 0)
-        self._printer.print(f"file {Colors.BOLD}\"{full_path}\"{Colors.ENDC}, ", 0)
+        self._printer.print(f'file {Colors.BOLD}"{full_path}"{Colors.ENDC}, ', 0)
         self._printer.print(f"line {Colors.BOLD}{frame.lineno}{Colors.ENDC}, ", 0)
         self._printer.print(f"in {Colors.CYAN}{Colors.BOLD}{frame.function}{Colors.ENDC}\n", 0)
 
@@ -415,7 +456,7 @@ class Tracer:
             self._printer.print(f"\n  {Colors.WARNING}Local variables:{Colors.ENDC}\n", 2)
             for name, value in frame.locals.items():
                 # Skip private variables and big objects
-                if not name.startswith('__') and len(str(value)) < 200:
+                if not name.startswith("__") and len(str(value)) < 200:
                     self._printer.print(f"    {Colors.BOLD}{name}{Colors.ENDC} = {value}\n", 2)
 
         print()  # Add a blank line between frames

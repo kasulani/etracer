@@ -1,6 +1,7 @@
 """
 Timer utilities for etracer.
 """
+
 import time
 from .printer import Colors
 from ..interfaces import TimerInterface
@@ -25,7 +26,7 @@ class Timer(TimerInterface):
         self._auto_print: bool = auto_print
         self._message: str = message
 
-    def __enter__(self) -> 'Timer':
+    def __enter__(self) -> "Timer":
         """
         Start the timer when entering the context.
 

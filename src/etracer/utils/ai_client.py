@@ -1,6 +1,7 @@
 """
 AI client implementation for etracer.
 """
+
 import json
 from typing import Optional
 
@@ -19,24 +20,24 @@ _TEMPERATURE = 0.3  # Controls randomness in AI responses
 class AIConfig:
     """Configuration for AI integration."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.api_key: Optional[str] = None  # OpenAI API key
         self.api_endpoint: str = _DEFAULT_API_ENDPOINT  # Default API endpoint for AI requests
         self.model: str = _DEFAULT_MODEL  # Default AI model to use
-        self.timeout: float = _DEFAULT_TIMEOUT  # Timeout for AI requests in seconds
+        self.timeout: int = _DEFAULT_TIMEOUT  # Timeout for AI requests in seconds
         self.enabled: bool = False  # Whether AI integration is enabled
         self.use_cache: bool = True  # Whether to use caching for AI responses
         self.base_url: Optional[str] = _DEFAULT_BASE_URL  # Base URL for the AI API
 
     def configure(
             self,
-            api_key=None,
-            base_url=None,
-            api_endpoint=None,
-            model=None,
-            timeout=None,
-            enabled=None,
-            use_cache=None,
+            api_key: str = None,
+            base_url: str = None,
+            api_endpoint: str = None,
+            model: str = None,
+            timeout: int = None,
+            enabled: bool = None,
+            use_cache: bool = None,
     ) -> None:
         """Configure the AI settings."""
         if api_key is not None:
@@ -80,7 +81,7 @@ class AIClient(AnalysisGetterInterface):
         if not self.config.enabled:
             return AiAnalysis(
                 explanation="AI integration is disabled.",
-                suggested_fix="Enable AI integration to get analysis."
+                suggested_fix="Enable AI integration to get analysis.",
             )
 
         self._schema["additionalProperties"] = False
@@ -88,8 +89,8 @@ class AIClient(AnalysisGetterInterface):
         response = self._ai_client.chat.completions.create(
             model=self.config.model,
             messages=[
-                {'role': 'system', 'content': system_prompt},
-                {'role': 'user', 'content': user_prompt}
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
             ],
             temperature=_TEMPERATURE,
             response_format={

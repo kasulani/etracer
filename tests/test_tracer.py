@@ -10,7 +10,7 @@ from etracer import (
     AiAnalysis,
     CacheData,
     AnalysisGetterInterface,
-    CacheInterface
+    CacheInterface,
 )
 from etracer.utils import NoOpPrinter, NoOpProgressIndicator
 
@@ -78,13 +78,13 @@ class TestTracer(unittest.TestCase):
             for frame in frames:
                 self.assertIsInstance(frame, Frame)
                 self.assertIsInstance(frame.function, str)
-                self.assertEqual(frame.function, 'test_extract_traceback_frames')
+                self.assertEqual(frame.function, "test_extract_traceback_frames")
                 self.assertIsInstance(frame.filename, str)
                 self.assertIsInstance(frame.lineno, int)
                 self.assertIsInstance(frame.lines, list)
                 self.assertIsInstance(frame.locals, dict)
-                self.assertIn('x', frame.locals)
-                self.assertEqual(eval(frame.locals['x']), 1)
+                self.assertIn("x", frame.locals)
+                self.assertEqual(eval(frame.locals["x"]), 1)
 
     def test_create_data_for_analysis(self):
         """Test the _create_data_for_analysis method of Tracer"""
@@ -104,11 +104,11 @@ class TestTracer(unittest.TestCase):
             self.assertIsInstance(data.exception_message, str)
             self.assertIsInstance(data.frames, list)
             self.assertEqual(len(data.frames), 1)
-            self.assertEqual(data.exception_type, 'ZeroDivisionError')
-            self.assertEqual(data.exception_message, 'division by zero')
-            self.assertEqual(data.most_relevant_frame.function, 'test_create_data_for_analysis')
-            self.assertIn('x', data.most_relevant_frame.locals)
-            self.assertEqual(data.most_relevant_frame.locals['x'], '1')
+            self.assertEqual(data.exception_type, "ZeroDivisionError")
+            self.assertEqual(data.exception_message, "division by zero")
+            self.assertEqual(data.most_relevant_frame.function, "test_create_data_for_analysis")
+            self.assertIn("x", data.most_relevant_frame.locals)
+            self.assertEqual(data.most_relevant_frame.locals["x"], "1")
 
     def test_get_user_prompt(self):
         """Test the _get_user_prompt method of Tracer"""
@@ -125,7 +125,9 @@ class TestTracer(unittest.TestCase):
             prompt = self._tracer._get_user_prompt()
 
             self.assertIsInstance(prompt, str)
-            self.assertEqual(prompt, f"""
+            self.assertEqual(
+                prompt,
+                f"""
         Error analysis request. Please analyze this Python error and provide:
         1. A clear explanation of what's happening
         2. A suggested fix
@@ -140,7 +142,8 @@ class TestTracer(unittest.TestCase):
         {json.dumps(self._tracer._data_for_analysis.most_relevant_frame.locals, indent=2)}
         
         Format your response as JSON with 'explanation' and 'suggested_fix' keys.
-        """)
+        """,
+            )
 
     def test_get_ai_analysis(self):
         cache = MockCache()
@@ -161,10 +164,14 @@ class TestTracer(unittest.TestCase):
             self.assertIsInstance(analysis, AiAnalysis)
             self.assertIsInstance(analysis.explanation, str)
             self.assertIsInstance(analysis.suggested_fix, str)
-            self.assertIn("A ZeroDivisionError is raised when your code attempts to divide a number.",
-                          analysis.explanation)
-            self.assertIn("Before performing the division (or modulo), validate that the denominator is not zero.",
-                          analysis.suggested_fix)
+            self.assertIn(
+                "A ZeroDivisionError is raised when your code attempts to divide a number.",
+                analysis.explanation,
+            )
+            self.assertIn(
+                "Before performing the division (or modulo), validate that the denominator is not zero.",
+                analysis.suggested_fix,
+            )
 
             self.assertEqual(cache.item_count(), 1)
 

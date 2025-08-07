@@ -208,6 +208,6 @@ __marimo__/
 
 # ignore all files in the notes directory
 /notes
-.tracer_cache
+.tracer_cache/
 .claude
 requirements-dev.txt

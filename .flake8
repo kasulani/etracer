@@ -1,0 +1,19 @@
+[flake8]
+max-line-length = 100
+exclude = 
+    .git,
+    __pycache__,
+    build,
+    dist,
+    .eggs,
+    .tox,
+    .venv,
+    venv,
+    *.egg-info
+per-file-ignores =
+    __init__.py: F401, F403
+    tests/*: E501
+extend-ignore =
+    # Allow line break before binary operator
+    W503
+max-complexity = 10

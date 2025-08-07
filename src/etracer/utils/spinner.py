@@ -1,6 +1,7 @@
 """
 Progress indicators for etracer.
 """
+
 import sys
 import time
 import threading
@@ -33,7 +34,9 @@ class NoOpProgressIndicator(ProgressIndicatorInterface):
 class Spinner(ProgressIndicatorInterface):
     """Spinner animation for indicating progress in a separate thread."""
 
-    def __init__(self, stop_event: threading.Event, output: TextIO = sys.stdout, message: str = "Processing"):
+    def __init__(
+        self, stop_event: threading.Event, output: TextIO = sys.stdout, message: str = "Processing"
+    ):
         """
         Initialize the spinner with a stop event and output stream.
         Args:
@@ -48,11 +51,13 @@ class Spinner(ProgressIndicatorInterface):
         self._sleep: float = 0.1
 
     def _spin_worker(self):
-        spinner = itertools.cycle(['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'])
+        spinner = itertools.cycle(["⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"])
         start_time = time.time()
         while not self._stop_event.is_set():
             elapsed = time.time() - start_time
-            self._output.write(f"\r{Colors.CYAN}{self._message} {next(spinner)} {elapsed:.1f}s{Colors.ENDC}")
+            self._output.write(
+                f"\r{Colors.CYAN}{self._message} {next(spinner)} {elapsed:.1f}s{Colors.ENDC}"
+            )
             self._output.flush()
             time.sleep(self._sleep)
 

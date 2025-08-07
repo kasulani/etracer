@@ -4,6 +4,7 @@ Interface definitions for etracer.
 This module contains all protocol classes that define interfaces for the package.
 These interfaces provide contracts that implementations must follow.
 """
+
 from typing import Protocol, Union
 
 from .models import AiAnalysis, CacheData
@@ -70,7 +71,7 @@ class AnalysisGetterInterface(Protocol):
 
 class ProgressIndicatorInterface(Protocol):
     """Interface for progress indicators."""
-    
+
     def start(self) -> None:
         """
         Start a spinner animation in a separate thread.
