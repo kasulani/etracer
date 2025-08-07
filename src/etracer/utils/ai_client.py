@@ -30,14 +30,14 @@ class AIConfig:
         self.base_url: Optional[str] = _DEFAULT_BASE_URL  # Base URL for the AI API
 
     def configure(
-            self,
-            api_key: str = None,
-            base_url: str = None,
-            api_endpoint: str = None,
-            model: str = None,
-            timeout: int = None,
-            enabled: bool = None,
-            use_cache: bool = None,
+        self,
+        api_key: str = None,
+        base_url: str = None,
+        api_endpoint: str = None,
+        model: str = None,
+        timeout: int = None,
+        enabled: bool = None,
+        use_cache: bool = None,
     ) -> None:
         """Configure the AI settings."""
         if api_key is not None:

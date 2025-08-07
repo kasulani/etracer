@@ -131,16 +131,16 @@ class TestTracer(unittest.TestCase):
         Error analysis request. Please analyze this Python error and provide:
         1. A clear explanation of what's happening
         2. A suggested fix
-        
+
         Exception Type: {self._tracer._data_for_analysis.exception_type}
         Error Message: {self._tracer._data_for_analysis.exception_message}
-        
+
         Most relevant code (error at line {self._tracer._data_for_analysis.most_relevant_frame.lineno}):
         {self._tracer._data_for_analysis.most_relevant_frame.code_snippet}
-        
+
         Relevant local variables:
         {json.dumps(self._tracer._data_for_analysis.most_relevant_frame.locals, indent=2)}
-        
+
         Format your response as JSON with 'explanation' and 'suggested_fix' keys.
         """,
             )

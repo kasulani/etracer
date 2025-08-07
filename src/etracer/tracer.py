@@ -186,11 +186,13 @@ class Tracer:
                     use_cache=True if ai_enabled else False,
                 )
                 self._printer.print(
-                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces with AI analysis activated{Colors.ENDC}\n"
+                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces with AI analysis"
+                    f" activated{Colors.ENDC}\n"
                 )
             else:
                 self._printer.print(
-                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces activated (AI disabled){Colors.ENDC}\n"
+                    f"{Colors.GREEN}Tracer enabled: Enhanced stack traces activated"
+                    f" (AI disabled){Colors.ENDC}\n"
                 )
 
     def disable(self) -> None:
@@ -244,7 +246,8 @@ class Tracer:
             except Exception as e:
                 # Fallback to basic analysis if AI fails
                 self._printer.print(
-                    f"{Colors.FAIL}\nAI analysis failed: {e}\nFalling back to basic analysis.{Colors.ENDC}"
+                    f"{Colors.FAIL}\nAI analysis failed: {e}\n"
+                    f"Falling back to basic analysis.{Colors.ENDC}"
                 )
                 return
         else:
@@ -257,7 +260,8 @@ class Tracer:
             f"\n{Colors.BLUE}{Colors.BOLD}Analysis:{Colors.ENDC}\n{ai_analysis.explanation}", 0
         )
         self._printer.print(
-            f"\n{Colors.GREEN}{Colors.BOLD}Suggested Fix:{Colors.ENDC}\n{ai_analysis.suggested_fix}\n",
+            f"\n{Colors.GREEN}{Colors.BOLD}Suggested Fix:{Colors.ENDC}"
+            f"\n{ai_analysis.suggested_fix}\n",
             0,
         )
 
@@ -477,16 +481,16 @@ class Tracer:
         Error analysis request. Please analyze this Python error and provide:
         1. A clear explanation of what's happening
         2. A suggested fix
-        
+
         Exception Type: {self._data_for_analysis.exception_type}
         Error Message: {self._data_for_analysis.exception_message}
-        
+
         Most relevant code (error at line {self._data_for_analysis.most_relevant_frame.lineno}):
         {self._data_for_analysis.most_relevant_frame.code_snippet}
-        
+
         Relevant local variables:
         {json.dumps(self._data_for_analysis.most_relevant_frame.locals, indent=2)}
-        
+
         Format your response as JSON with 'explanation' and 'suggested_fix' keys.
         """
 
