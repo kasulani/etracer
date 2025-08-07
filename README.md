@@ -45,12 +45,12 @@ etracer.enable()
 import etracer
 import os
 
-# Enable tracer with AI (using environment variable for API key)
-API_KEY = os.environ.get("OPENAI_API_KEY")
+# Enable tracer with AI
 etracer.enable(
-    enable_ai=True,
-    api_key=API_KEY,
-    model="gpt-3.5-turbo"
+  enable_ai=True,
+  api_key="your-api-key",
+  model="your-preferred-model",
+  base_url="https://your-endpoint"
 )
 
 # Your code here
@@ -65,7 +65,12 @@ etracer.enable(
 import etracer
 
 # Enable at the start of your script
-etracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
+etracer.enable(
+  enable_ai=True,
+  api_key="your-api-key",
+  model="your-preferred-model",
+  base_url="https://your-endpoint"
+)
 
 # All uncaught exceptions will be handled by tracer
 ```
@@ -76,7 +81,12 @@ etracer.enable(verbosity=2, show_locals=True, ai_enabled=True)
 import etracer
 
 # Configure as needed
-etracer.enable()
+etracer.enable(
+  enable_ai=True,
+  api_key="your-api-key",
+  model="your-preferred-model",
+  base_url="https://your-endpoint"
+)
 
 
 @etracer.debug
@@ -91,7 +101,12 @@ def my_function():
 import etracer
 
 # Configure as needed
-etracer.enable()
+etracer.enable(
+  enable_ai=True,
+  api_key="your-api-key",
+  model="your-preferred-model",
+  base_url="https://your-endpoint"
+)
 
 # Use context manager for specific code blocks
 with etracer.analyzer():
