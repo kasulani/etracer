@@ -187,7 +187,7 @@ class Tracer:
                     api_key=api_key,
                     base_url=base_url,
                     model=model,
-                    enabled=True,
+                    enabled=enable_ai,
                     use_cache=True if enable_ai else False,
                 )
                 self._printer.print(
@@ -321,9 +321,6 @@ class Tracer:
 
         try:
             with Timer(auto_print=False) as timer:
-                if self._ai_client is None:
-                    raise ValueError("AI client is not initialized")
-
                 analysis = self._ai_client.get_analysis(
                     system_prompt=self._system_prompt,
                     user_prompt=self._get_user_prompt(),

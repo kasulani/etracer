@@ -2,8 +2,7 @@ import time
 import unittest
 import sys
 import json
-from typing import Union, Any, Optional, Type
-from types import TracebackType
+from typing import Union
 from etracer import (
     Tracer,
     Frame,
@@ -13,7 +12,14 @@ from etracer import (
     AnalysisGetterInterface,
     CacheInterface,
 )
-from etracer.utils import NoOpPrinter, NoOpProgressIndicator, ConsolePrinter
+from etracer.utils import (
+    NoOpPrinter,
+    NoOpProgressIndicator,
+    ConsolePrinter,
+    FileBasedCache,
+    CacheConfig,
+)
+from unittest.mock import Mock
 
 
 # Mock classes for testing
@@ -53,11 +59,39 @@ class TestTracer(unittest.TestCase):
             progress_indicator=NoOpProgressIndicator(),
             cache=MockCache(),
         )
-        self._tracer.enable(verbosity=0)  # Set verbosity to 0 for minimal output during tests
 
     def tearDown(self):
         self._tracer.disable()
         self._tracer = None
+
+    def assert_exception_was_caught_and_handled(self):
+        # Verify that the exception was caught and handled
+        self.assertEqual(self._tracer._data_for_analysis.exception_type, ZeroDivisionError.__name__)
+        self.assertEqual(self._tracer._data_for_analysis.exception_message, "division by zero")
+
+    def test_tracer_format_exception(self):
+        """Test the format_exception method of Tracer"""
+        self._tracer.enable(
+            verbosity=0,
+            enable_ai=True,
+            api_key="test_key",
+            model="test_model",
+            base_url="https://test.com",
+        )
+
+        self.assertTrue(self._tracer.enabled)
+        self.assertTrue(self._tracer.ai_config.enabled)
+        try:
+            # Create a simple error to analyze
+            x = 1
+            _ = x / 0
+        except ZeroDivisionError:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+
+            self._tracer._format_exception(exc_type, exc_value, exc_traceback)
+            self.assertIsInstance(self._tracer._traceback_frames, list)
+            self.assertIsInstance(self._tracer._data_for_analysis, DataForAnalysis)
+            self.assert_exception_was_caught_and_handled()
 
     def test_extract_traceback_frames(self):
         """Test the _extract_traceback_frames method of Tracer"""
@@ -186,6 +220,7 @@ class TestTracer(unittest.TestCase):
             ).model_dump(),
             use_default=True,
         )
+        # self._tracer.enable(verbosity=0)
 
         try:
             # Create a simple error to analyze
@@ -203,13 +238,16 @@ class TestTracer(unittest.TestCase):
             self.assertIn("Mock cached explanation: ZeroDivisionError", analysis.explanation)
             self.assertIn("Mock cached suggested fix: division by zero", analysis.suggested_fix)
 
-    def assert_exception_was_caught_and_handled(self):
-        # Verify that the exception was caught and handled
-        self.assertEqual(self._tracer._data_for_analysis.exception_type, ZeroDivisionError.__name__)
-        self.assertEqual(self._tracer._data_for_analysis.exception_message, "division by zero")
-
     def test_analyzer_context_manager(self):
         """Test the analyzer context manager functionality with a real exception"""
+
+        self._tracer.enable(
+            verbosity=0,
+            enable_ai=True,
+            api_key="test_key",
+            model="test_model",
+            base_url="https://test.com",
+        )
 
         with self._tracer.analyzer():
             _ = 1 / 0  # This should raise ZeroDivisionError
@@ -218,6 +256,14 @@ class TestTracer(unittest.TestCase):
 
     def test_analyze_decorator(self):
         """Test the analyze decorator functionality"""
+
+        self._tracer.enable(
+            verbosity=0,
+            enable_ai=True,
+            api_key="test_key",
+            model="test_model",
+            base_url="https://test.com",
+        )
 
         # Define a function that will be decorated
         @self._tracer.analyze
@@ -234,6 +280,15 @@ class TestTracer(unittest.TestCase):
 
     def test_analyze_exception(self):
         """Test the analyze_exception method"""
+
+        self._tracer.enable(
+            verbosity=0,
+            enable_ai=True,
+            api_key="test_key",
+            model="test_model",
+            base_url="https://test.com",
+        )
+
         try:
             _ = 1 / 0
         except Exception as e:
@@ -266,7 +321,6 @@ class TestTracer(unittest.TestCase):
 
     def test_cache_operations(self):
         """Test cache operations directly"""
-        from etracer.utils import FileBasedCache, CacheConfig
 
         # Create a test cache instance
         cache_config = CacheConfig()
@@ -337,7 +391,7 @@ class TestTracer(unittest.TestCase):
 
             # Test that exception handling works with different verbosity levels
             try:
-                x = 1 / 0
+                _ = 1 / 0
             except Exception as e:
                 tracer.analyze_exception(e)  # Should not raise any exceptions
 
