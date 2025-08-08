@@ -21,10 +21,10 @@ def zero_division():
         etracer.analyze_exception(e)
 
 
-@etracer.debug
+@etracer.analyze
 def decorated_function():
     """Test the decorator functionality"""
-    print("\nTesting the @etracer.debug decorator...")
+    print("\nTesting the @etracer.analyze decorator...")
     # This will cause a KeyError
     my_dict = {"a": 1, "b": 2}
     value = my_dict["c"]  # This will raise a KeyError

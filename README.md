@@ -89,7 +89,7 @@ etracer.enable(
 )
 
 
-@etracer.debug
+@etracer.analyze
 def my_function():
     # If this function raises an exception, tracer will handle it
     x = 1 / 0

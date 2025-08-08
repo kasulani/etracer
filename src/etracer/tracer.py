@@ -14,7 +14,7 @@ Usage:
     etracer.enable()
 
     # As a decorator
-    @etracer.debug
+    @etracer.analyze
     def my_function():
         # code that might raise exceptions
 
@@ -65,11 +65,11 @@ class Tracer:
     """Main tracer class that handles exception interception and formatting."""
 
     def __init__(
-            self,
-            ai_client: Optional[AnalysisGetterInterface] = None,
-            printer: Optional[PrinterInterface] = None,
-            cache: Optional[CacheInterface] = None,
-            progress_indicator: Optional[ProgressIndicatorInterface] = None,
+        self,
+        ai_client: Optional[AnalysisGetterInterface] = None,
+        printer: Optional[PrinterInterface] = None,
+        cache: Optional[CacheInterface] = None,
+        progress_indicator: Optional[ProgressIndicatorInterface] = None,
     ):
         # Store the original excepthook
         self.original_excepthook = sys.excepthook
@@ -117,7 +117,7 @@ class Tracer:
 
         self._format_exception(type(exception), exception, exception.__traceback__)
 
-    def debug(self, func: Callable) -> Callable:
+    def analyze(self, func: Callable) -> Callable:
         """
         Decorator to catch and format exceptions in a function.
 
@@ -155,12 +155,12 @@ class Tracer:
         return ExceptionAnalyzer(self)
 
     def enable(
-            self,
-            verbosity: int = 2,
-            enable_ai: bool = False,
-            api_key: Optional[str] = None,
-            model: Optional[str] = None,
-            base_url: Optional[str] = None,
+        self,
+        verbosity: int = 2,
+        enable_ai: bool = False,
+        api_key: Optional[str] = None,
+        model: Optional[str] = None,
+        base_url: Optional[str] = None,
     ) -> None:
         """
         Enable the tracer by replacing the default excepthook.
@@ -210,10 +210,10 @@ class Tracer:
             )
 
     def exception_handler(
-            self,
-            exc_type: Type[BaseException],
-            exc_value: BaseException,
-            exc_traceback: Optional[TracebackType],
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: Optional[TracebackType],
     ) -> None:
         """
         Custom exception handler to replace sys.excepthook.
@@ -230,10 +230,10 @@ class Tracer:
         self._format_exception(exc_type, exc_value, exc_traceback)
 
     def _format_exception(
-            self,
-            exc_type: Type[BaseException],
-            exc_value: BaseException,
-            exc_traceback: Optional[TracebackType],
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: Optional[TracebackType],
     ) -> None:
         """
         Format and print an exception in a more readable way.
@@ -277,9 +277,9 @@ class Tracer:
         self._print_footer()
 
     def _create_data_for_analysis(
-            self,
-            exc_type: Type[BaseException],
-            exc_value: BaseException,
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
     ) -> None:
         """
         Create a structured representation of the error data for AI analysis.
@@ -576,7 +576,7 @@ _tracer = Tracer(printer=ConsolePrinter())
 # Public API
 enable = _tracer.enable
 disable = _tracer.disable
-debug = _tracer.debug
+analyze = _tracer.analyze
 analyzer = _tracer.analyzer
 analyze_exception = _tracer.analyze_exception
 
