@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: eTracer Discussions
+    url: https://github.com/kasulani/etracer/discussions
+    about: Please ask and answer questions here.
+  - name: eTracer Documentation
+    url: https://github.com/kasulani/etracer/tree/main/docs
+    about: Check the documentation for more information about using eTracer.
