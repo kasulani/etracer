@@ -1,6 +1,6 @@
 [flake8]
 max-line-length = 100
-exclude = 
+exclude =
     .git,
     __pycache__,
     build,
@@ -11,9 +11,17 @@ exclude =
     venv,
     *.egg-info
 per-file-ignores =
-    __init__.py: F401, F403
-    tests/*: E501
+    __init__.py: F401, F403, D400
+    tests/*: E501, D100, D101, D102, D103, D104, D105, D107, D200, D202, D205, D400, D401
+    examples.py: D200, D205, D400, D401
+    docs/conf.py: D100, E402
+    src/etracer/models.py: D100
+    src/etracer/tracer.py: D205, D400, D401
+    src/etracer/interfaces.py: D205
+    src/etracer/utils/printer.py: D101
+    src/etracer/utils/spinner.py: D205
 extend-ignore =
-    # Allow line break before binary operator
-    W503
+    W503,
+    D107,
+    D200
 max-complexity = 10

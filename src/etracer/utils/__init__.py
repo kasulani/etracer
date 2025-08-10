@@ -2,11 +2,11 @@
 Utility modules for etracer package.
 """
 
-from .printer import Colors, ConsolePrinter
+from .ai_client import AIClient, AIConfig
 from .cache import CacheConfig, FileBasedCache
-from .timer import Timer
+from .printer import Colors, ConsolePrinter
 from .spinner import Spinner
-from .ai_client import AIConfig, AIClient
+from .timer import Timer
 
 __all__ = [
     "Colors",

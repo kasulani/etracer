@@ -1,14 +1,14 @@
 """Tests for the cache module."""
 
-import unittest
-import os
-import time
-import tempfile
-import shutil
 import json
+import os
+import shutil
+import tempfile
+import time
+import unittest
 
-from etracer.utils import CacheConfig, FileBasedCache
 from etracer import CacheData
+from etracer.utils import CacheConfig, FileBasedCache
 
 CACHE_TTL = 86400
 

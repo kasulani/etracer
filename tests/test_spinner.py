@@ -1,11 +1,11 @@
 """Tests for the spinner module."""
 
-import unittest
-import threading
 import io
-from unittest.mock import patch, MagicMock
+import threading
+import unittest
+from unittest.mock import MagicMock, patch
 
-from etracer.utils import Spinner, Colors
+from etracer.utils import Colors, Spinner
 
 _THREAD_TIME_OUT = 0.5  # seconds for spinner thread to stop gracefully
 

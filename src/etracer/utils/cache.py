@@ -2,13 +2,13 @@
 Cache implementations for etracer.
 """
 
+import json
 import os
 import time
-import json
-from typing import Union, Optional
+from typing import Optional, Union
 
-from ..models import CacheData
 from ..interfaces import CacheInterface
+from ..models import CacheData
 
 # Cache settings
 _CACHE_DIR = os.path.join(os.getcwd(), ".tracer_cache")  # Local to project directory

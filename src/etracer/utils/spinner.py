@@ -2,14 +2,14 @@
 Progress indicators for etracer.
 """
 
-import sys
-import time
-import threading
 import itertools
-from typing import TextIO, Optional
+import sys
+import threading
+import time
+from typing import Optional, TextIO
 
-from .printer import Colors
 from ..interfaces import ProgressIndicatorInterface
+from .printer import Colors
 
 # Constants
 _THREAD_TIME_OUT = 0.5  # seconds for spinner thread to stop gracefully

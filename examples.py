@@ -2,7 +2,9 @@
 Test script for the tracer module.
 Run this script to see how tracer handles different types of exceptions.
 """
+
 import os
+
 import etracer
 
 AI_MODEL = "gpt-4o-mini"

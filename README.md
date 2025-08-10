@@ -162,15 +162,15 @@ line 8:     x = 10
 line 9:     y = 0
   > 10:     result = x / y
 line 11:     return result
-line 12: 
+line 12:
 
 Local variables:
     x = 10
     y = 0
 
 Analysis:
-You attempted to divide by zero, which is a mathematical error. In this case, 
-the variable 'y' has a value of 0, and you're trying to divide 'x' (which is 10) 
+You attempted to divide by zero, which is a mathematical error. In this case,
+the variable 'y' has a value of 0, and you're trying to divide 'x' (which is 10)
 by 'y'. Division by zero is not allowed in mathematics or programming.
 
 Suggested Fix:
@@ -244,7 +244,23 @@ cd etracer
 
 # Install development dependencies
 pip install -e ".[dev]"
+
+# Install pre-commit hooks
+pre-commit install
 ```
+
+### Pre-commit Hooks
+
+The project uses pre-commit hooks to ensure code quality before each commit. These hooks automatically run:
+
+- Code formatting with Black
+- Import sorting with isort
+- Linting with Flake8
+- Type checking with MyPy
+- Unit tests with pytest
+- Various other code quality checks
+
+The hooks will prevent committing if any of these checks fail.
 
 ### Code Quality Tools
 

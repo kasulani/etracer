@@ -21,10 +21,9 @@ Features
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-   
+
    installation
    usage
    api
    advanced
    contributing
-

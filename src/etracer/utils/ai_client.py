@@ -6,8 +6,9 @@ import json
 from typing import Optional
 
 from openai import OpenAI
-from ..models import AiAnalysis
+
 from ..interfaces import AnalysisGetterInterface
+from ..models import AiAnalysis
 
 # API configuration
 _DEFAULT_BASE_URL = "https://api.openai.com/v1"

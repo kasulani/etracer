@@ -1,10 +1,10 @@
 """Tests for the AIClient class."""
 
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
-from etracer.utils import AIClient, AIConfig
 from etracer import AiAnalysis
+from etracer.utils import AIClient, AIConfig
 
 
 class TestAIConfig(unittest.TestCase):

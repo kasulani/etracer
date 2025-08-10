@@ -4,8 +4,9 @@ Timer utilities for etracer.
 
 import time
 from typing import Any
-from .printer import Colors
+
 from ..interfaces import TimerInterface
+from .printer import Colors
 
 
 class Timer(TimerInterface):

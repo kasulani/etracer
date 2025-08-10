@@ -51,18 +51,18 @@ You can customize how etracer displays output by creating your own printer imple
 
     from etracer import set_printer
     from etracer.interfaces import PrinterInterface
-    
+
     class MyCustomPrinter(PrinterInterface):
         def __init__(self, verbosity=2):
             self.verbosity = verbosity
-            
+
         def print(self, message, min_verbosity=0):
             if self.verbosity >= min_verbosity:
                 # Custom printing logic here
                 print(f"[CUSTOM] {message}")
-                
+
         def set_verbosity(self, verbosity):
             self.verbosity = verbosity
-    
+
     # Set your custom printer
     set_printer(MyCustomPrinter())

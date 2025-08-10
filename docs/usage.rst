@@ -135,7 +135,7 @@ Configuration Options
 Example Output
 ------------
 
-.. code-block:: 
+.. code-block::
 
     ========================================================================
     ZeroDivisionError: division by zero
@@ -148,15 +148,15 @@ Example Output
     line 9:     y = 0
       > 10:     result = x / y
     line 11:     return result
-    line 12: 
+    line 12:
 
     Local variables:
         x = 10
         y = 0
 
     Analysis:
-    You attempted to divide by zero, which is a mathematical error. In this case, 
-    the variable 'y' has a value of 0, and you're trying to divide 'x' (which is 10) 
+    You attempted to divide by zero, which is a mathematical error. In this case,
+    the variable 'y' has a value of 0, and you're trying to divide 'x' (which is 10)
     by 'y'. Division by zero is not allowed in mathematics or programming.
 
     Suggested Fix:

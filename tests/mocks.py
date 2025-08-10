@@ -1,13 +1,14 @@
 from typing import Union
+from unittest.mock import Mock
+
 from etracer import (
     AiAnalysis,
-    CacheData,
     AnalysisGetterInterface,
+    CacheData,
     CacheInterface,
     PrinterInterface,
     ProgressIndicatorInterface,
 )
-from unittest.mock import Mock
 
 
 class MockAIClient(Mock, AnalysisGetterInterface):

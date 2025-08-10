@@ -29,30 +29,30 @@ Usage:
         etracer.analyze_exception(e)
 """
 
-import sys
-import os
-import linecache
-import json
-import time
 import hashlib
+import json
+import linecache
+import os
+import sys
 import threading
+import time
 from types import TracebackType
-from typing import Any, List, Optional, Type, Callable, Union
+from typing import Any, Callable, List, Optional, Type, Union
 
-from .models import Frame, DataForAnalysis, AiAnalysis, CacheData
 from .interfaces import (
     AnalysisGetterInterface,
     CacheInterface,
     PrinterInterface,
     ProgressIndicatorInterface,
 )
+from .models import AiAnalysis, CacheData, DataForAnalysis, Frame
 from .utils import (
-    FileBasedCache,
-    CacheConfig,
-    AIConfig,
     AIClient,
+    AIConfig,
+    CacheConfig,
     Colors,
     ConsolePrinter,
+    FileBasedCache,
     Spinner,
     Timer,
 )

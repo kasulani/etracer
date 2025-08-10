@@ -1,28 +1,14 @@
+import json
+import sys
 import time
 import unittest
-import sys
-import json
+from unittest.mock import Mock
 
 import etracer
-from etracer import (
-    Tracer,
-    Frame,
-    DataForAnalysis,
-    AiAnalysis,
-    CacheData,
-)
-from etracer.utils import (
-    ConsolePrinter,
-    FileBasedCache,
-    CacheConfig,
-)
-from unittest.mock import Mock
-from .mocks import (
-    MockAIClient,
-    MockCache,
-    MockPrinter,
-    MockProgressIndicator,
-)
+from etracer import AiAnalysis, CacheData, DataForAnalysis, Frame, Tracer
+from etracer.utils import CacheConfig, ConsolePrinter, FileBasedCache
+
+from .mocks import MockAIClient, MockCache, MockPrinter, MockProgressIndicator
 
 
 class TestTracer(unittest.TestCase):

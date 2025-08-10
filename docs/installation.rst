@@ -38,6 +38,6 @@ To install etracer with development dependencies:
     # Clone the repository
     git clone https://github.com/emmanuelkasulani/etracer.git
     cd etracer
-    
+
     # Install development dependencies
     pip install -e ".[dev]"

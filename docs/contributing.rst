@@ -17,6 +17,23 @@ To set up the development environment:
     # Install development dependencies
     pip install -e ".[dev]"
 
+    # Install pre-commit hooks
+    pre-commit install
+
+Pre-commit Hooks
+---------------
+
+The project uses pre-commit hooks to ensure code quality before each commit. These hooks automatically run:
+
+- Code formatting with Black
+- Import sorting with isort
+- Linting with Flake8
+- Type checking with MyPy
+- Unit tests with pytest
+- Various other code quality checks
+
+The hooks will prevent committing if any of these checks fail.
+
 Code Quality Tools
 ---------------
 
@@ -85,9 +102,9 @@ To build the documentation:
 
     # Install documentation dependencies
     pip install -e ".[docs]"
-    
+
     # Build documentation
     make docs-html
-    
+
     # View documentation
     make docs-open
