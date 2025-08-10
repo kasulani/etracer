@@ -266,6 +266,9 @@ make test
 # Run tests with coverage report
 make test-coverage
 
+# Open coverage report in browser
+make coverage-report
+
 # Run all quality checks (format, lint, typecheck, test)
 make all
 ```
@@ -284,8 +287,11 @@ The following Make commands are available:
 | `make typecheck`     | Run type checking with MyPy                       |
 | `make test`          | Run unit tests                                    |
 | `make test-coverage` | Run tests with coverage reporting                 |
+| `make coverage-report` | Open HTML coverage report in browser              |
 | `make clean`         | Remove build artifacts                            |
 | `make all`           | Run format, lint, typecheck, and test             |
+| `make docs-html`     | Build HTML documentation                          |
+| `make docs-open`     | Open HTML documentation in browser                |
 
 ## License
 

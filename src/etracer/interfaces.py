@@ -25,6 +25,14 @@ class PrinterInterface(Protocol):
         """
         pass
 
+    def set_verbosity(self, verbosity: int) -> None:
+        """
+        Set the verbosity level for printing messages.
+        Args:
+            verbosity: The new verbosity level
+        """
+        pass
+
 
 class CacheInterface(Protocol):
     """Interface for caching functionality."""

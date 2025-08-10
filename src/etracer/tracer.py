@@ -78,6 +78,7 @@ class Tracer:
         self.show_locals: bool = (
             True if self.verbosity == 2 else False
         )  # Show local variables if verbosity is high
+        self._ai_analysis_failed: bool = True  # Flag to track AI analysis failure
         self.ai_config = AIConfig()  # AI integration configuration
         self._traceback_frames: List[Frame] = []  # Store traceback frames for analysis
         self._data_for_analysis: Optional[DataForAnalysis] = None  # Store data for AI analysis
@@ -250,15 +251,7 @@ class Tracer:
 
         if self.ai_config.enabled and self.ai_config.api_key:
             self._printer.print(f"{Colors.CYAN}Analyzing error with AI...{Colors.ENDC}\n", 2)
-            try:
-                ai_analysis = self._get_ai_analysis()
-            except Exception as e:
-                # Fallback to basic analysis if AI fails
-                self._printer.print(
-                    f"{Colors.FAIL}\nAI analysis failed: {e}\n"
-                    f"Falling back to basic analysis.{Colors.ENDC}"
-                )
-                return
+            ai_analysis = self._get_ai_analysis()
         else:
             self._printer.print(
                 f"{Colors.WARNING}AI analysis is disabled or API key not provided.{Colors.ENDC}\n"
@@ -311,23 +304,32 @@ class Tracer:
         Returns:
             Dictionary with explanation and suggested fix
         """
-        cache_key = self._create_hash_key()
-        exists = self._read_from_cache(cache_key) if self._caching_is_enabled() else None
-        if exists:
-            return exists
-
-        if self._progress_indicator is not None:
-            self._progress_indicator.start()
-
+        self._ai_analysis_failed = True  # Flag to track AI analysis failure
+        _indicator_started = False
         try:
+            cache_key = self._create_hash_key()
+            exists = self._read_from_cache(cache_key) if self._caching_is_enabled() else None
+            if exists:
+                return exists
+
+            if self._ai_client is None:
+                raise ValueError("AI client is not configured")
+
+            if self._progress_indicator is not None:
+                _indicator_started = True
+                self._progress_indicator.start()
+
             with Timer(auto_print=False) as timer:
                 analysis = self._ai_client.get_analysis(
                     system_prompt=self._system_prompt,
                     user_prompt=self._get_user_prompt(),
                 )
 
-            if self._progress_indicator is not None:
+            if self._progress_indicator is not None and _indicator_started:
+                _indicator_started = False
                 self._progress_indicator.stop()
+
+            self._ai_analysis_failed = False
 
             self._printer.print(
                 f"{Colors.CYAN}AI Analysis completed in {timer.elapsed():.2f}s{Colors.ENDC}\n"
@@ -336,13 +338,17 @@ class Tracer:
 
             return analysis
         except Exception as e:
-            if self._progress_indicator:
+            if self._progress_indicator is not None and _indicator_started:
                 self._progress_indicator.stop()
 
-            return AiAnalysis(
-                explanation=f"AI analysis failed: {str(e)}.",
-                suggested_fix="Unable to provide AI-powered suggestions due to an error.",
-            )
+            if self._ai_analysis_failed:
+                return AiAnalysis(
+                    explanation=f"AI analysis failed: {str(e)}.",
+                    suggested_fix="Unable to provide AI-powered suggestions due to an error.",
+                )
+
+            self._printer.print(f"{Colors.FAIL}Error during AI analysis: {str(e)}{Colors.ENDC}\n")
+            return analysis
 
     def _write_to_cache(self, analysis: AiAnalysis, key: str) -> None:
         """
@@ -359,21 +365,15 @@ class Tracer:
             self._printer.print(
                 f"{Colors.CYAN}Caching AI response with key {key}{Colors.ENDC}\n", 2
             )
-            try:
-                self._cache.set(
-                    key=key,
-                    value=CacheData(
-                        timestamp=time.time(),
-                        explanation=analysis.explanation,
-                        suggested_fix=analysis.suggested_fix,
-                    ),
-                )
-                return
-            except Exception as e:  # todo: Return a custom exception for cache errors
-                self._printer.print(
-                    f"{Colors.FAIL}Failed to write to cache: {str(e)}{Colors.ENDC}", 0
-                )
-                return
+            self._cache.set(
+                key=key,
+                value=CacheData(
+                    timestamp=time.time(),
+                    explanation=analysis.explanation,
+                    suggested_fix=analysis.suggested_fix,
+                ),
+            )
+            return
 
     def _read_from_cache(self, key: str) -> Union[AiAnalysis, None]:
         """
@@ -384,24 +384,17 @@ class Tracer:
         Returns:
             AiAnalysis object if found in cache, None otherwise
         """
-        try:
-            with Timer(message="Finished reading from cache"):
-                data = (
-                    self._cache.get(key)
-                    if (self._caching_is_enabled() and self._cache is not None)
-                    else None
-                )
-                if data:
-                    self._printer.print(
-                        f"{Colors.CYAN}Using cached AI response with key {key}{Colors.ENDC}\n", 2
-                    )
-                    return AiAnalysis(
-                        explanation=data.explanation, suggested_fix=data.suggested_fix
-                    )
-        except Exception as e:  # todo: Return a custom exception for cache errors
-            self._printer.print(
-                f"\n{Colors.FAIL}Failed to read from cache: {str(e)}.{Colors.ENDC}\n", 0
+        with Timer(message="Finished reading from cache"):
+            data = (
+                self._cache.get(key)
+                if (self._caching_is_enabled() and self._cache is not None)
+                else None
             )
+            if data:
+                self._printer.print(
+                    f"{Colors.CYAN}Using cached AI response with key {key}{Colors.ENDC}\n", 2
+                )
+                return AiAnalysis(explanation=data.explanation, suggested_fix=data.suggested_fix)
         return None
 
     def _print_stack_trace_frames(self) -> None:
@@ -552,19 +545,17 @@ class Tracer:
         except Exception as e:
             return f"<unprintable value of type {type(value).__name__}>: {str(e)}"
 
-    @staticmethod
-    def _print_header(exc_type: Type[BaseException], exc_value: BaseException) -> None:
+    def _print_header(self, exc_type: Type[BaseException], exc_value: BaseException) -> None:
         header = f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
         header += f"{Colors.FAIL}{Colors.BOLD} {exc_type.__name__}: {exc_value}{Colors.ENDC}\n"
         header += f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
-        print(header)
+        self._printer.print(header, 0)
 
-    @staticmethod
-    def _print_footer() -> None:
+    def _print_footer(self) -> None:
         footer = f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
         footer += f"{Colors.FAIL}{Colors.BOLD}End of Traceback{Colors.ENDC}\n"
         footer += f"{Colors.FAIL}{Colors.BOLD}{'=' * 80}{Colors.ENDC}\n"
-        print(footer)
+        self._printer.print(footer, 0)
 
 
 # Create a singleton instance with the default printer

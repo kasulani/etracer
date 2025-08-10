@@ -15,22 +15,6 @@ from ..interfaces import ProgressIndicatorInterface
 _THREAD_TIME_OUT = 0.5  # seconds for spinner thread to stop gracefully
 
 
-class NoOpProgressIndicator(ProgressIndicatorInterface):
-    """No-op progress indicator that does nothing."""
-
-    def __init__(self) -> None:
-        """Initialize the no-op progress indicator."""
-        pass
-
-    def start(self) -> None:
-        """Start the no-op progress indicator (does nothing)."""
-        pass
-
-    def stop(self) -> None:
-        """Stop the no-op progress indicator (does nothing)."""
-        pass
-
-
 class Spinner(ProgressIndicatorInterface):
     """Spinner animation for indicating progress in a separate thread."""
 

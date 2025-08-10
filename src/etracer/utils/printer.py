@@ -51,15 +51,3 @@ class ConsolePrinter(PrinterInterface):
             verbosity: The new verbosity level
         """
         self.verbosity = verbosity
-
-
-class NoOpPrinter(PrinterInterface):
-    """
-    Printer implementation that discards all messages (useful for testing).
-    """
-
-    def __init__(self) -> None:
-        pass
-
-    def print(self, message: str, verbosity: int = 1) -> None:
-        pass

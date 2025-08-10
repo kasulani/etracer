@@ -1,4 +1,4 @@
-.PHONY: help clean install dev-install format lint typecheck test test-coverage docs docs-html docs-clean all
+.PHONY: help clean install dev-install format lint typecheck test test-coverage coverage-report docs docs-html docs-clean docs-open all
 
 PACKAGE_NAME = etracer
 PYTHON = python
@@ -15,11 +15,13 @@ help:
 	@echo "  make typecheck       - Run type checking with mypy"
 	@echo "  make test            - Run tests with pytest"
 	@echo "  make test-coverage   - Run tests with coverage report"
+	@echo "  make coverage-report - Open HTML coverage report in browser"
 	@echo "  make clean           - Remove build artifacts"
 	@echo "  make all             - Run format, lint, typecheck, and test"
 	@echo "  make docs            - Build all documentation formats"
 	@echo "  make docs-html       - Build HTML documentation"
 	@echo "  make docs-clean      - Clean documentation build files"
+	@echo "  make docs-open       - Open HTML documentation in browser"
 
 clean:
 	rm -rf build/
@@ -69,5 +71,9 @@ docs: docs-html
 # Open the documentation in the default browser
 docs-open: docs-html
 	open docs/_build/html/index.html
+
+# Open the coverage report in the default browser
+coverage-report: test-coverage
+	open htmlcov/index.html
 
 all: format lint typecheck test

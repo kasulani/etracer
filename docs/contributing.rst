@@ -39,6 +39,9 @@ The project uses several code quality tools that can be run via Make commands:
     # Run tests with coverage report
     make test-coverage
 
+    # Open coverage report in browser
+    make coverage-report
+
     # Run all quality checks (format, lint, typecheck, test)
     make all
 
@@ -47,20 +50,23 @@ Makefile Commands
 
 The following Make commands are available:
 
-====================  ===================================================
-Command               Description
-====================  ===================================================
-``make help``         Show available commands
-``make install``      Install the package
-``make dev-install``  Install in development mode with dev dependencies
-``make format``       Format code with Black
-``make lint``         Run linting with Flake8
-``make typecheck``    Run type checking with MyPy
-``make test``         Run unit tests
+======================  ===================================================
+Command                Description
+======================  ===================================================
+``make help``          Show available commands
+``make install``       Install the package
+``make dev-install``   Install in development mode with dev dependencies
+``make format``        Format code with Black
+``make lint``          Run linting with Flake8
+``make typecheck``     Run type checking with MyPy
+``make test``          Run unit tests
 ``make test-coverage`` Run tests with coverage reporting
-``make clean``        Remove build artifacts
-``make all``          Run format, lint, typecheck, and test
-====================  ===================================================
+``make coverage-report`` Open HTML coverage report in browser
+``make clean``         Remove build artifacts
+``make all``           Run format, lint, typecheck, and test
+``make docs-html``     Build HTML documentation
+``make docs-open``     Open HTML documentation in browser
+======================  ===================================================
 
 Pull Request Process
 -----------------
@@ -81,8 +87,7 @@ To build the documentation:
     pip install -e ".[docs]"
     
     # Build documentation
-    cd docs
-    make html
+    make docs-html
     
     # View documentation
-    open _build/html/index.html
+    make docs-open
