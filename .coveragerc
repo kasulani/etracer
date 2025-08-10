@@ -1,0 +1,43 @@
+[run]
+source = src/etracer
+
+[report]
+# Exclude patterns from coverage report
+exclude_lines =
+    # Skip abstract/interface method definitions
+    pass
+    raise NotImplementedError
+    @abstractmethod
+    def __repr__
+    def __str__
+    
+    # Skip defensive code (pragmas, debug-only code)
+    pragma: no cover
+    def __debug__
+    if self\.debug
+    
+    # Skip unimplemented/abstract methods
+    raise AssertionError
+    raise NotImplementedError
+    
+    # Skip branches that can't be covered easily
+    except ImportError
+    except Exception as e:
+    warn\(
+    
+    # Skip platform-specific code
+    if sys\.platform == 
+    if platform\.
+    
+    # Skip unreachable exit points
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+
+# Exclude the interface files entirely
+omit =
+    */interfaces.py
+    */site-packages/*
+    */tests/*
+    
+[html]
+directory = htmlcov
