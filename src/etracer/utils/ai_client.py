@@ -5,7 +5,6 @@ AI client implementation for etracer.
 import json
 from typing import Optional
 
-# Import OpenAI client
 from openai import OpenAI
 from ..models import AiAnalysis
 from ..interfaces import AnalysisGetterInterface
