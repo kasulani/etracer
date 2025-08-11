@@ -1,0 +1,103 @@
+name: Publish to TestPyPI
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      version_suffix:
+        description: 'Dev version suffix (e.g., dev0, rc1)'
+        required: true
+        default: 'dev0'
+
+  # Optionally trigger on pushes to specific branches
+  # Uncomment to enable
+  # push:
+  #   branches:
+  #     - 'staging'
+  #     - 'release/*'
+
+# Important: Only run this workflow if the PR checks pass
+jobs:
+  # This job depends on the PR workflow jobs
+  check_pr_status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR workflow status
+        id: check-workflow
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sha = context.sha;
+
+            // Find the most recent PR workflow for this commit
+            const workflows = await github.rest.actions.listWorkflowRunsForRepo({
+              owner,
+              repo,
+              status: 'completed',
+              event: 'pull_request'
+            });
+
+            const run = workflows.data.workflow_runs.find(run => run.head_sha === sha);
+
+            if (!run) {
+              core.setFailed('No PR workflow found for this commit');
+              return;
+            }
+
+            if (run.conclusion !== 'success') {
+              core.setFailed('PR checks did not pass');
+              return;
+            }
+
+            core.info('PR workflow checks passed');
+
+  build_and_publish:
+    needs: check_pr_status
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install build twine setuptools wheel
+
+      # Use dynamic versioning with the provided suffix
+      - name: Prepare version
+        id: prepare-version
+        run: |
+          # Get base version from pyproject.toml
+          BASE_VERSION=$(grep -Po '(?<=version = ")[^"]*' pyproject.toml)
+          DEV_SUFFIX="${{ github.event.inputs.version_suffix }}"
+
+          # For manual triggers, use the provided suffix
+          if [ -n "$DEV_SUFFIX" ]; then
+            NEW_VERSION="${BASE_VERSION}.${DEV_SUFFIX}"
+          else
+            # For automatic triggers, use the short commit SHA
+            SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+            NEW_VERSION="${BASE_VERSION}.dev${SHORT_SHA}"
+          fi
+
+          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "Version set to: $NEW_VERSION"
+
+          # Temporarily update version in pyproject.toml
+          sed -i "s/version = \"$BASE_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
+
+      - name: Build package
+        run: python -m build
+
+      - name: Publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          skip-existing: true
