@@ -37,25 +37,57 @@ jobs:
       - name: Prepare version
         id: prepare-version
         run: |
-          # Get base version from pyproject.toml
-          BASE_VERSION=$(grep -Po '(?<=version = ")[^"]*' pyproject.toml)
-          echo "Base version detected: $BASE_VERSION"
-          DEV_SUFFIX="${{ github.event.inputs.version_suffix }}"
+          # Use Python to update the version - more reliable than sed
+          cat > update_version.py << 'EOL'
+          import re
+          import sys
+          import os
 
-          # For manual triggers, use the provided suffix
+          # Get suffix from command line
+          suffix = sys.argv[1] if len(sys.argv) > 1 else "dev0"
+
+          # Read pyproject.toml
+          with open("pyproject.toml", "r") as f:
+              content = f.read()
+
+          # Extract current version
+          version_match = re.search(r'version\s*=\s*"([^"]+)"', content)
+          if not version_match:
+              print("Error: Could not find version in pyproject.toml")
+              sys.exit(1)
+
+          base_version = version_match.group(1)
+          print(f"Base version detected: {base_version}")
+
+          # Create new version
+          new_version = f"{base_version}.{suffix}"
+          print(f"New version: {new_version}")
+
+          # Update version in file
+          updated_content = re.sub(
+              r'(version\s*=\s*)"([^"]+)"',
+              f'\\1"{new_version}"',
+              content
+          )
+
+          # Write updated content back
+          with open("pyproject.toml", "w") as f:
+              f.write(updated_content)
+
+          # Output for GitHub Actions
+          with open(os.environ['GITHUB_ENV'], 'a') as env_file:
+              env_file.write(f"VERSION={new_version}\n")
+          EOL
+
+          # Execute the Python script with the suffix
+          DEV_SUFFIX="${{ github.event.inputs.version_suffix }}"
           if [ -n "$DEV_SUFFIX" ]; then
-            NEW_VERSION="${BASE_VERSION}.${DEV_SUFFIX}"
+            python update_version.py "$DEV_SUFFIX"
           else
             # For automatic triggers, use the short commit SHA
             SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
-            NEW_VERSION="${BASE_VERSION}.dev${SHORT_SHA}"
+            python update_version.py "dev${SHORT_SHA}"
           fi
-
-          echo "VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          echo "Version set to: $NEW_VERSION"
-
-          # Temporarily update version in pyproject.toml
-          sed -i "s/version = \"$BASE_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
 
       - name: Build package
         run: python -m build
