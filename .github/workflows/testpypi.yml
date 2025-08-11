@@ -39,6 +39,7 @@ jobs:
         run: |
           # Get base version from pyproject.toml
           BASE_VERSION=$(grep -Po '(?<=version = ")[^"]*' pyproject.toml)
+          echo "Base version detected: $BASE_VERSION"
           DEV_SUFFIX="${{ github.event.inputs.version_suffix }}"
 
           # For manual triggers, use the provided suffix
@@ -54,7 +55,7 @@ jobs:
           echo "Version set to: $NEW_VERSION"
 
           # Temporarily update version in pyproject.toml
-          sed -i'' "s/version = \"$BASE_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
+          sed -i "s/version = \"$BASE_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
 
       - name: Build package
         run: python -m build

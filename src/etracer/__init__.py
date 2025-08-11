@@ -7,26 +7,6 @@ eTracer: An enhanced Python tracer
 A utility package that provides enhanced debugging for Python stack traces.
 It hijacks the default exception handling process to provide clearer,
 more readable stack traces with AI-powered explanations and suggested fixes.
-
-Usage:
-    # Global exception handling
-    import etracer
-    etracer.enable()
-
-    # As a decorator
-    @etracer.analyze
-    def my_function():
-        # code that might raise exceptions
-
-    # As a context manager
-    with etracer.catch_errors():
-        # code that might raise exceptions
-
-    # Explicit usage
-    try:
-        # code that might fail
-    except Exception as e:
-        etracer.analyze_exception(e)
 """
 
 __version__ = "0.1.0"
