@@ -16,45 +16,9 @@ on:
   #     - 'staging'
   #     - 'release/*'
 
-# Important: Only run this workflow if the PR checks pass
 jobs:
-  # This job depends on the PR workflow jobs
-  check_pr_status:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check PR workflow status
-        id: check-workflow
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const sha = context.sha;
-
-            // Find the most recent PR workflow for this commit
-            const workflows = await github.rest.actions.listWorkflowRunsForRepo({
-              owner,
-              repo,
-              status: 'completed',
-              event: 'pull_request'
-            });
-
-            const run = workflows.data.workflow_runs.find(run => run.head_sha === sha);
-
-            if (!run) {
-              core.setFailed('No PR workflow found for this commit');
-              return;
-            }
-
-            if (run.conclusion !== 'success') {
-              core.setFailed('PR checks did not pass');
-              return;
-            }
-
-            core.info('PR workflow checks passed');
-
+  # Skip PR check for manual triggers
   build_and_publish:
-    needs: check_pr_status
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

@@ -45,7 +45,7 @@ docs = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/kasulani/etracer"
+Homepage = "https://kasulani.github.io/etracer/"
 Repository = "https://github.com/kasulani/etracer"
 "Bug Tracker" = "https://github.com/kasulani/etracer/issues"
 
