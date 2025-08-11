@@ -259,7 +259,7 @@ etracer.enable(
 
 - Python 3.8+
 - `pydantic` 2.0+
-- `openai` 1.0+
+- `openai` 1.99.6+
 
 ## Development
 

@@ -12,6 +12,12 @@ jobs:
       - name: Check Branch Name
         run: |
           echo "Branch name: ${{ github.head_ref }}"
+          # Skip the check for Dependabot PRs
+          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+            echo "Dependabot PR detected. Skipping branch name check."
+            exit 0
+          fi
+
           if ! [[ ${{ github.head_ref }} =~ ^(feature|bugfix|hotfix|chore|docs|test|refactor|ci|build)/[a-z0-9-]+$ ]]; then
             echo "::error::Branch name does not follow the convention: [type]/[description]"
             echo "Allowed types: feature, bugfix, hotfix, chore, docs, test, refactor, ci, build"
@@ -35,6 +41,12 @@ jobs:
           git branch
       - name: Check Commit Messages
         run: |
+          # Skip the check for Dependabot PRs
+          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+            echo "Dependabot PR detected. Skipping commit message check."
+            exit 0
+          fi
+
           echo "Checking commit messages..."
           echo "Base branch: ${{ github.base_ref }}"
           echo "Head branch: ${{ github.head_ref }}"
@@ -67,6 +79,12 @@ jobs:
     steps:
       - name: Check PR Title
         run: |
+          # Skip the check for Dependabot PRs
+          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+            echo "Dependabot PR detected. Skipping PR title check."
+            exit 0
+          fi
+
           pr_title="${{ github.event.pull_request.title }}"
           echo "PR Title: $pr_title"
           if ! [[ "$pr_title" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
