@@ -255,7 +255,9 @@ class TestTracer(unittest.TestCase):
         self._tracer._progress_indicator = progress_indicator
         self._tracer._ai_client = None
 
+        # First enable tracer, then set AI client to None to test that condition
         self._enable_tracer()
+        self._tracer._ai_client = None
         self.assertTrue(self._tracer.enabled)
         self.assertTrue(self._tracer.ai_config.enabled)
 
@@ -276,7 +278,11 @@ class TestTracer(unittest.TestCase):
             self.assertTrue(self._tracer._ai_analysis_failed)
             self.assertIsInstance(analysis, AiAnalysis)
             self.assertIn("AI analysis failed", analysis.explanation)
-            self.assertIn("AI analysis failed: AI client is not configured", analysis.explanation)
+            self.assertIn(
+                "AI analysis failed: AI client is not configured",
+                analysis.explanation,
+                "The error message doesn't match the expected value",
+            )
             self.assertIn("Unable to provide AI-powered suggestions", analysis.suggested_fix)
 
             # Verify that cache.set was called and raised the exception

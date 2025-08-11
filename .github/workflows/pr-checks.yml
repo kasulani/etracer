@@ -1,0 +1,80 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  branch-name:
+    name: Branch Name Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Branch Name
+        run: |
+          echo "Branch name: ${{ github.head_ref }}"
+          if ! [[ ${{ github.head_ref }} =~ ^(feature|bugfix|hotfix|chore|docs|test|refactor|ci|build)/[a-z0-9-]+$ ]]; then
+            echo "::error::Branch name does not follow the convention: [type]/[description]"
+            echo "Allowed types: feature, bugfix, hotfix, chore, docs, test, refactor, ci, build"
+            echo "Example: feature/add-new-validation"
+            exit 1
+          else
+            echo "Branch name follows the convention. Good job!"
+          fi
+  commit-message:
+    name: Commit Message Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch Branches
+        run: |
+          git fetch origin ${{ github.base_ref }}:${{ github.base_ref }}
+          git fetch origin ${{ github.head_ref }}:${{ github.head_ref }}
+          git branch
+      - name: Check Commit Messages
+        run: |
+          echo "Checking commit messages..."
+          echo "Base branch: ${{ github.base_ref }}"
+          echo "Head branch: ${{ github.head_ref }}"
+          # Get all commits in the PR
+          commits=$(git log origin/${{ github.base_ref }}..origin/${{ github.head_ref }} --pretty="%s")
+          if [ -z "$commits" ]; then
+            echo "::error::No commits found between the branches. Something went wrong."
+            exit 1
+          fi
+          echo "Found commits:"
+          echo "$commits"
+          echo "------------------------"
+          # Check each commit
+          echo "$commits" | while read commit_msg; do
+            if ! [[ "$commit_msg" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
+              echo "::error::Commit message does not follow conventional commits format: '$commit_msg'"
+              echo "Expected format: type(scope): message"
+              echo "Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build"
+              echo "Example: feat(auth): add user authentication"
+              exit 1
+            fi
+          done
+          if [ $? -ne 0 ]; then
+            exit 1
+          fi
+          echo "All commit messages follow the conventional commits format. Great!"
+  pr-title:
+    name: Pull Request Title Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR Title
+        run: |
+          pr_title="${{ github.event.pull_request.title }}"
+          echo "PR Title: $pr_title"
+          if ! [[ "$pr_title" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
+            echo "::error::PR title does not follow conventional commits format: '$pr_title'"
+            echo "Expected format: type(scope): message"
+            echo "Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build"
+            echo "Example: feat(auth): add user authentication"
+            exit 1
+          else
+            echo "PR title follows the conventional commits format. Nice work!"
+          fi

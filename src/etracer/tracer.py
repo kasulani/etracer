@@ -86,10 +86,8 @@ class Tracer:
         You are an expert Python developer helping with debugging.
         Provide clear, concise explanations of errors and practical suggestions for fixing them.
         """
-        # dependency injection
-        self._ai_client: Optional[AnalysisGetterInterface] = (
-            ai_client if ai_client is not None else AIClient(config=self.ai_config)
-        )
+        # Initialize components as None for lazy loading
+        self._ai_client: Optional[AnalysisGetterInterface] = ai_client
         self._cache: Optional[CacheInterface] = (
             cache if cache is not None else FileBasedCache(CacheConfig())
         )
@@ -191,6 +189,8 @@ class Tracer:
                     enabled=enable_ai,
                     use_cache=True if enable_ai else False,
                 )
+                if self._ai_client is None:
+                    self._ai_client = AIClient(config=self.ai_config)
                 self._printer.print(
                     f"{Colors.GREEN}Tracer enabled: Enhanced stack traces with AI analysis"
                     f" activated{Colors.ENDC}\n"
@@ -524,7 +524,7 @@ class Tracer:
         Returns:
             True if caching is enabled, False otherwise
         """
-        return self.ai_config.use_cache
+        return self.ai_config.use_cache and self._cache is not None
 
     @staticmethod
     def _format_value(value: Any) -> str:
@@ -558,7 +558,7 @@ class Tracer:
         self._printer.print(footer, 0)
 
 
-# Create a singleton instance with the default printer
+# Create a singleton instance with minimal eager initialization
 _tracer = Tracer(printer=ConsolePrinter())
 
 # Public API
