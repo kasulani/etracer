@@ -54,7 +54,7 @@ jobs:
           echo "Version set to: $NEW_VERSION"
 
           # Temporarily update version in pyproject.toml
-          sed -i "s/version = \"$BASE_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
+          sed -i'' "s/version = \"$BASE_VERSION\"/version = \"$NEW_VERSION\"/" pyproject.toml
 
       - name: Build package
         run: python -m build

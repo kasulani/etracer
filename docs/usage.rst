@@ -137,32 +137,45 @@ Example Output
 
 .. code-block::
 
-    ========================================================================
+    ================================================================================
     ZeroDivisionError: division by zero
-    ========================================================================
-
+    ================================================================================
     Stack Trace: (most recent call last)
+    Frame[1/1], file "/Users/emmanuel.kasulani/Projects/etracer/examples.py", line 19, in zero_division
+        16:     try:
+        17:         x = 10
+        18:         y = 0
+      > 19:         result = x / y
+        20:         print(f"Result: {result}")  # This should not execute
 
-    [1/1] File "example.py", line 10, in test_function
-    line 8:     x = 10
-    line 9:     y = 0
-      > 10:     result = x / y
-    line 11:     return result
-    line 12:
-
-    Local variables:
+      Local variables:
         x = 10
         y = 0
+        e = ZeroDivisionError('division by zero')
+
+    Analyzing error with AI...
+    Finished reading from cache 0.00s
+    AI Analysis completed in 7.09s
+    Caching AI response with key 6b466215770b73fc6da24d3601e9ab4e
 
     Analysis:
-    You attempted to divide by zero, which is a mathematical error. In this case,
-    the variable 'y' has a value of 0, and you're trying to divide 'x' (which is 10)
-    by 'y'. Division by zero is not allowed in mathematics or programming.
+    The error occurs because the code attempts to divide the variable 'x' (which is 10) by 'y' (which is 0). In Python, division by zero is not defined, leading to a ZeroDivisionError. This is a common error when performing arithmetic operations, and it indicates that the denominator in a division operation cannot be zero.
 
     Suggested Fix:
-    Add a check to prevent division by zero:
+    To fix this error, you should check if 'y' is zero before performing the division. You can modify the code as follows:
 
-    if y != 0:
-        result = x / y
-    else:
-        result = 0  # or some other fallback value, or raise a custom exception
+    try:
+        x = 10
+        y = 0
+        if y == 0:
+            print("Cannot divide by zero")
+        else:
+            result = x / y
+            print(f"Result: {result}")
+    except ZeroDivisionError as e:
+        print(f"Error: {e}")
+
+    This way, you avoid the division by zero and handle the situation gracefully.
+    ================================================================================
+    End of Traceback
+    ================================================================================

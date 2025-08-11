@@ -12,10 +12,14 @@ repos:
     -   id: debug-statements
     -   id: detect-private-key
 
--   repo: https://github.com/psf/black
-    rev: 24.2.0
+# Using local black to ensure Python 3.13 compatibility
+-   repo: local
     hooks:
-    -   id: black
+    -   id: black-local
+        name: black
+        entry: black
+        language: system
+        types: [python]
         args: [--safe]
 
 -   repo: https://github.com/pycqa/flake8
