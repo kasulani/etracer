@@ -46,11 +46,11 @@ The current version is in early development stage, so expect possible API change
 ```python
 import etracer
 
-# Enable tracer at the start of your script
+# Enable etracer at the start of your script
 etracer.enable()
 
 # Your code here
-# Any uncaught exceptions will be processed by tracer
+# Any uncaught exceptions will be processed by etracer
 ```
 
 In this mode, eTracer will enhance your stack traces with better formatting, with color and local variable inspection,
@@ -64,7 +64,7 @@ integration.
 import etracer
 import os
 
-# Enable tracer with AI
+# Enable etracer with AI
 etracer.enable(
     enable_ai=True,
     api_key="your-api-key",
@@ -97,7 +97,7 @@ etracer.enable(
     base_url="https://your-endpoint"
 )
 
-# All uncaught exceptions will be handled by tracer
+# All uncaught exceptions will be handled by etracer
 ```
 
 ### 2. Function Decorator
@@ -116,7 +116,7 @@ etracer.enable(
 
 @etracer.analyze
 def my_function():
-    # If this function raises an exception, tracer will handle it
+    # If this function raises an exception, etracer will handle it
     x = 1 / 0
 ```
 
@@ -134,8 +134,8 @@ etracer.enable(
 )
 
 # Use context manager for specific code blocks
-with etracer.analyzer():
-    # Only exceptions in this block will be handled by tracer
+with etracer.analyzer:
+    # Only exceptions in this block will be handled by etracer
     result = "5" + 5  # TypeError
 ```
 
