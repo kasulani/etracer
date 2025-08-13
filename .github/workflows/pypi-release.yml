@@ -49,7 +49,13 @@ jobs:
 
           # Get latest tag
           git fetch --tags
-          latest_tag=$(git tag -l "v*" | sort -V | tail -n 1 || echo "v$CURRENT_VERSION")
+          # Check if any tags exist
+          if git tag -l "v*" | grep -q .; then
+            latest_tag=$(git tag -l "v*" | sort -V | tail -n 1)
+          else
+            latest_tag="v$CURRENT_VERSION"
+            echo "No existing tags found, using current version from pyproject.toml"
+          fi
           echo "Latest tag: $latest_tag"
 
           # Remove 'v' prefix
@@ -58,6 +64,13 @@ jobs:
 
           # Split version into components
           IFS='.' read -r major minor patch <<< "$latest_version"
+
+          # Ensure we have valid numeric values
+          major=${major:-0}
+          minor=${minor:-1}
+          patch=${patch:-0}
+
+          echo "Current components: major=$major, minor=$minor, patch=$patch"
 
           # Default to no change
           version_changed=false
