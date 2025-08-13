@@ -11,11 +11,11 @@ Basic Usage (No AI)
 
     import etracer
 
-    # Enable tracer at the start of your script
+    # Enable etracer at the start of your script
     etracer.enable()
 
     # Your code here
-    # Any uncaught exceptions will be processed by tracer
+    # Any uncaught exceptions will be processed by etracer
 
 With AI-Powered Analysis
 ~~~~~~~~~~~~~~~~~~~~~
@@ -25,7 +25,7 @@ With AI-Powered Analysis
     import etracer
     import os
 
-    # Enable tracer with AI
+    # Enable etracer with AI
     etracer.enable(
         enable_ai=True,
         api_key="your-api-key",
@@ -54,7 +54,7 @@ Usage Modes
         base_url="https://your-endpoint"
     )
 
-    # All uncaught exceptions will be handled by tracer
+    # All uncaught exceptions will be handled by etracer
 
 2. Function Decorator
 ~~~~~~~~~~~~~~~~~~~
@@ -73,7 +73,7 @@ Usage Modes
 
     @etracer.analyze
     def my_function():
-        # If this function raises an exception, tracer will handle it
+        # If this function raises an exception, etracer will handle it
         x = 1 / 0
 
 3. Context Manager
@@ -93,7 +93,7 @@ Usage Modes
 
     # Use context manager for specific code blocks
     with etracer.analyzer:
-        # Only exceptions in this block will be handled by tracer
+        # Only exceptions in this block will be handled by etracer
         result = "5" + 5  # TypeError
 
 4. Explicit Analysis

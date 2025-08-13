@@ -61,10 +61,10 @@ jobs:
           echo "------------------------"
           # Check each commit
           echo "$commits" | while read commit_msg; do
-            if ! [[ "$commit_msg" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
+            if ! [[ "$commit_msg" =~ ^(feat|fix|patch|minor|major|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
               echo "::error::Commit message does not follow conventional commits format: '$commit_msg'"
               echo "Expected format: type(scope): message"
-              echo "Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build"
+              echo "Types: feat, fix, patch, minor, major, docs, style, refactor, perf, test, chore, ci, build"
               echo "Example: feat(auth): add user authentication"
               exit 1
             fi
@@ -87,10 +87,10 @@ jobs:
 
           pr_title="${{ github.event.pull_request.title }}"
           echo "PR Title: $pr_title"
-          if ! [[ "$pr_title" =~ ^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
+          if ! [[ "$pr_title" =~ ^(feat|fix|patch|minor|major|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?:\ .+ ]]; then
             echo "::error::PR title does not follow conventional commits format: '$pr_title'"
             echo "Expected format: type(scope): message"
-            echo "Types: feat, fix, docs, style, refactor, perf, test, chore, ci, build"
+            echo "Types: feat, fix, patch, minor, major, docs, style, refactor, perf, test, chore, ci, build"
             echo "Example: feat(auth): add user authentication"
             exit 1
           else

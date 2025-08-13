@@ -113,9 +113,10 @@ class Tracer:
 
         Returns:
             A context manager object that can be used with the 'with' statement.
-            Usage:
-                with etracer.analyzer:
-                    # code that might raise exceptions
+
+        Usage:
+            with etracer.analyzer:
+                # code that might raise exceptions
         """
 
         class ExceptionAnalyzer:
