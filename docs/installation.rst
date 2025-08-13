@@ -8,25 +8,12 @@ Requirements
 - pydantic 2.0+
 - openai 1.99.6+
 
-Installing from PyPI (future)
-----------------------------
+Installing from PyPI
+-------------------
 
 .. code-block:: bash
 
     pip install etracer
-
-Installing from GitHub
---------------------
-
-.. code-block:: bash
-
-    # Install directly from the repository
-    pip install git+https://github.com/emmanuelkasulani/etracer.git
-
-    # For development, clone the repository and install in editable mode
-    git clone https://github.com/emmanuelkasulani/etracer.git
-    cd etracer
-    pip install -e .
 
 Development Installation
 ----------------------

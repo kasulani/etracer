@@ -19,13 +19,8 @@ fixes.
 ## Installation
 
 ```bash
-# Install directly from the repository
-pip install git+https://github.com/emmanuelkasulani/etracer.git
-
-# For development, clone the repository and install in editable mode
-git clone https://github.com/emmanuelkasulani/etracer.git
-cd etracer
-pip install -e .
+# Install from PyPI
+pip install etracer
 ```
 
 ## Versioning
