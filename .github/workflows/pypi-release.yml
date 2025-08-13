@@ -36,7 +36,7 @@ jobs:
           echo "Branch: $branch"
 
           # Get current version from pyproject.toml for fallback
-          CURRENT_VERSION=$(python -c "import tomli; print(tomli.loads(open('pyproject.toml', 'rb').read())['project']['version'])")
+          CURRENT_VERSION=$(python -c "import tomli; with open('pyproject.toml', 'rb') as f: print(tomli.load(f)['project']['version'])")
           echo "Current version in pyproject.toml: $CURRENT_VERSION"
 
           # Get latest tag
