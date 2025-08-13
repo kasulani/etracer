@@ -217,7 +217,7 @@ jobs:
   # Special job for releasing the current version without updating it
   special_release:
     name: Special Release (No Version Update)
-    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'chore/fix-initial-release'
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'chore/run-special-release'
     runs-on: ubuntu-latest
 
     steps:
