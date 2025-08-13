@@ -171,7 +171,10 @@ jobs:
   release:
     name: Build and Release
     needs: [check_version, update_version]
-    if: needs.check_version.outputs.version_changed == 'true'
+    # Run for version changes OR for the special fix branch
+    if: |
+      needs.check_version.outputs.version_changed == 'true' ||
+      github.event.pull_request.head.ref == 'chore/fix-version-release'
     runs-on: ubuntu-latest
 
     steps:
