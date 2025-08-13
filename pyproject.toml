@@ -1,16 +1,18 @@
 [build-system]
-requires = ["setuptools>=64", "wheel"]
+requires = [
+    "setuptools>=64",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "etracer"
-version = "0.0.0"
+version = "0.1.0"
 description = "Enhanced Python tracer with AI-powered stack trace analysis"
 readme = "README.md"
 authors = [
-    {name = "Emmanuel King Kasulani", email = "kasulani@gmail.com"}
+    { name = "Emmanuel King Kasulani", email = "kasulani@gmail.com" },
 ]
-license = {text = "Apache-2.0"}
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
@@ -22,12 +24,22 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.13",
 ]
-keywords = ["debug", "trace", "exception", "stack trace", "ai", "error analysis"]
+keywords = [
+    "debug",
+    "trace",
+    "exception",
+    "stack trace",
+    "ai",
+    "error analysis",
+]
 requires-python = ">=3.8"
 dependencies = [
     "pydantic>=2.0.0",
-    "openai>=1.99.6"
+    "openai>=1.99.6",
 ]
+
+[project.license]
+text = "Apache-2.0"
 
 [project.optional-dependencies]
 dev = [
@@ -50,27 +62,21 @@ Repository = "https://github.com/kasulani/etracer"
 "Bug Tracker" = "https://github.com/kasulani/etracer/issues"
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = [
+    "src",
+]
 
 [tool.black]
 line-length = 100
-target-version = ["py38", "py39", "py310", "py311", "py312"]
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  | venv
-)/
-'''
+target-version = [
+    "py38",
+    "py39",
+    "py310",
+    "py311",
+    "py312",
+]
+include = "\\.pyi?$"
+exclude = "/(\n    \\.eggs\n  | \\.git\n  | \\.hg\n  | \\.mypy_cache\n  | \\.tox\n  | \\.venv\n  | _build\n  | buck-out\n  | build\n  | dist\n  | venv\n)/\n"
 
 [tool.isort]
 profile = "black"
@@ -94,6 +100,8 @@ warn_unreachable = true
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-testpaths = ["tests"]
+testpaths = [
+    "tests",
+]
 python_files = "test_*.py"
 addopts = "--cov=etracer --cov-report=term-missing --cov-report=html"
