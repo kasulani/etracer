@@ -31,15 +31,16 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install build twine setuptools wheel
+          python -m pip install build twine setuptools wheel tomli tomli-w
 
       # Use dynamic versioning with the provided suffix
       - name: Prepare version
         id: prepare-version
         run: |
-          # Use Python to update the version - more reliable than sed
+          # Use tomli to read and update the version
           cat > update_version.py << 'EOL'
-          import re
+          import tomli
+          import tomli_w
           import sys
           import os
 
@@ -47,32 +48,23 @@ jobs:
           suffix = sys.argv[1] if len(sys.argv) > 1 else "dev0"
 
           # Read pyproject.toml
-          with open("pyproject.toml", "r") as f:
-              content = f.read()
+          with open("pyproject.toml", "rb") as f:
+              data = tomli.load(f)
 
-          # Extract current version
-          version_match = re.search(r'version\s*=\s*"([^"]+)"', content)
-          if not version_match:
-              print("Error: Could not find version in pyproject.toml")
-              sys.exit(1)
-
-          base_version = version_match.group(1)
+          # Get current version
+          base_version = data["project"]["version"]
           print(f"Base version detected: {base_version}")
 
-          # Create new version
+          # Create new version with suffix
           new_version = f"{base_version}.{suffix}"
           print(f"New version: {new_version}")
 
-          # Update version in file
-          updated_content = re.sub(
-              r'(version\s*=\s*)"([^"]+)"',
-              f'\\1"{new_version}"',
-              content
-          )
+          # Update version
+          data["project"]["version"] = new_version
 
-          # Write updated content back
-          with open("pyproject.toml", "w") as f:
-              f.write(updated_content)
+          # Write updated data back
+          with open("pyproject.toml", "wb") as f:
+              tomli_w.dump(data, f)
 
           # Output for GitHub Actions
           with open(os.environ['GITHUB_ENV'], 'a') as env_file:

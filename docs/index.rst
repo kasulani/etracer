@@ -18,6 +18,21 @@ Features
 - **Local Variable Inspection**: See the values of local variables at the point of error
 - **Performance Optimized**: Smart caching to reduce API calls for similar errors
 
+Versioning
+---------
+
+This package follows `Semantic Versioning <https://semver.org/>`_ with the following guidelines:
+
+- **0.x.y versions** (e.g., 0.1.0, 0.2.0) indicate **initial development phase**:
+    - The API is not yet stable and may change between minor versions
+    - Features may be added, modified, or removed without major version changes
+    - Not recommended for production-critical systems without pinned versions
+
+- **1.0.0 and above** will indicate a **stable API** with semantic versioning guarantees:
+    - MAJOR version for incompatible API changes
+    - MINOR version for backwards-compatible functionality additions
+    - PATCH version for backwards-compatible bug fixes
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
@@ -27,3 +42,4 @@ Features
    api
    advanced
    contributing
+   deployment

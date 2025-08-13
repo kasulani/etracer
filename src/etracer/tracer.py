@@ -140,9 +140,9 @@ class Tracer:
         Args:
             verbosity: How much detail to show (0=minimal, 1=normal, 2=detailed)
             enable_ai: Whether to use AI for error analysis
-            api_key: OpenAI API key for AI analysis
+            api_key: API key for AI analysis
             model: AI model to use for analysis
-            base_url: Base URL for the AI API (if different from default)
+            base_url: Base URL for the AI API
         """
         if not self.enabled:
             sys.excepthook = self.exception_handler
@@ -292,7 +292,7 @@ class Tracer:
                 _indicator_started = True
                 self._progress_indicator.start()
 
-            with Timer(auto_print=False) as timer:
+            with Timer() as timer:
                 analysis = self._ai_client.get_analysis(
                     system_prompt=self._system_prompt,
                     user_prompt=self._get_user_prompt(),
@@ -357,7 +357,7 @@ class Tracer:
         Returns:
             AiAnalysis object if found in cache, None otherwise
         """
-        with Timer(message="Finished reading from cache"):
+        with Timer() as timer:
             data = (
                 self._cache.get(key)
                 if (self._caching_is_enabled() and self._cache is not None)
@@ -366,6 +366,9 @@ class Tracer:
             if data:
                 self._printer.print(
                     f"{Colors.CYAN}Using cached AI response with key {key}{Colors.ENDC}\n", 2
+                )
+                self._printer.print(
+                    f"{Colors.CYAN}Cache read completed in {timer.elapsed():.2f}s{Colors.ENDC}\n"
                 )
                 return AiAnalysis(explanation=data.explanation, suggested_fix=data.suggested_fix)
         return None

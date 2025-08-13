@@ -6,7 +6,6 @@ import time
 from typing import Any
 
 from ..interfaces import TimerInterface
-from .printer import Colors
 
 
 class Timer(TimerInterface):
@@ -14,19 +13,13 @@ class Timer(TimerInterface):
     Timer for measuring elapsed time with context manager support.
     """
 
-    def __init__(self, auto_print: bool = True, message: str = "Operation completed in"):
+    def __init__(self) -> None:
         """
         Initialize the timer.
-
-        Args:
-            auto_print: Whether to automatically print the elapsed time on exit
-            message: Message to print before the elapsed time
         """
         self._start_time: float = 0.0
         self._elapsed: float = 0.0
         self._running: bool = False
-        self._auto_print: bool = auto_print
-        self._message: str = message
 
     def __enter__(self) -> "Timer":
         """
@@ -45,9 +38,6 @@ class Timer(TimerInterface):
         """
         self._elapsed = self.elapsed()
         self._running = False
-
-        if self._auto_print:
-            print(f"{Colors.CYAN}{self._message} {self._elapsed:.2f}s{Colors.ENDC}")
 
     def elapsed(self) -> float:
         """
