@@ -76,15 +76,15 @@ jobs:
           version_changed=false
 
           # Determine new version based on branch prefix
-          if [[ $branch == "feature/"* ]]; then
+          if [[ $branch == "feature/"* || $branch == "minor/"* ]]; then
             minor=$((minor + 1))
             patch=0
             version_changed=true
-            echo "Feature branch - incrementing minor version"
-          elif [[ $branch == "bugfix/"* || $branch == "hotfix/"* ]]; then
+            echo "Feature/minor branch - incrementing minor version"
+          elif [[ $branch == "bugfix/"* || $branch == "hotfix/"* || $branch == "patch/"* ]]; then
             patch=$((patch + 1))
             version_changed=true
-            echo "Bugfix/hotfix branch - incrementing patch version"
+            echo "Bugfix/hotfix/patch branch - incrementing patch version"
           elif [[ $branch == "major/"* ]]; then
             major=$((major + 1))
             minor=0

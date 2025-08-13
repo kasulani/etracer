@@ -18,9 +18,9 @@ jobs:
             exit 0
           fi
 
-          if ! [[ ${{ github.head_ref }} =~ ^(feature|bugfix|hotfix|chore|docs|test|refactor|ci|build)/[a-z0-9-]+$ ]]; then
+          if ! [[ ${{ github.head_ref }} =~ ^(feature|minor|bugfix|hotfix|patch|major|chore|docs|test|refactor|ci|build)/[a-z0-9-]+$ ]]; then
             echo "::error::Branch name does not follow the convention: [type]/[description]"
-            echo "Allowed types: feature, bugfix, hotfix, chore, docs, test, refactor, ci, build"
+            echo "Allowed types: feature, minor, bugfix, hotfix, patch, major, chore, docs, test, refactor, ci, build"
             echo "Example: feature/add-new-validation"
             exit 1
           else

@@ -134,7 +134,7 @@ etracer.enable(
 )
 
 # Use context manager for specific code blocks
-with etracer.analyzer():
+with etracer.analyzer:
     # Only exceptions in this block will be handled by tracer
     result = "5" + 5  # TypeError
 ```

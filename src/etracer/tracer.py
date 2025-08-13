@@ -109,7 +109,14 @@ class Tracer:
         return wrapper
 
     def analyzer(self) -> Any:
-        """Context manager to catch and format exceptions."""
+        """Context manager to catch and format exceptions.
+
+        Returns:
+            A context manager object that can be used with the 'with' statement.
+            Usage:
+                with etracer.analyzer:
+                    # code that might raise exceptions
+        """
 
         class ExceptionAnalyzer:
             def __init__(self, tracer: "Tracer") -> None:
@@ -541,7 +548,7 @@ _tracer = Tracer(printer=ConsolePrinter())
 enable = _tracer.enable
 disable = _tracer.disable
 analyze = _tracer.analyze
-analyzer = _tracer.analyzer
+analyzer = _tracer.analyzer()
 analyze_exception = _tracer.analyze_exception
 
 
