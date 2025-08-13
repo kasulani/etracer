@@ -243,7 +243,8 @@ jobs:
               print(data["project"]["version"])
           EOL
 
-          CURRENT_VERSION=$(python -m pip install tomli && python get_version.py)
+          python -m pip install tomli
+          CURRENT_VERSION=$(python get_version.py)
           echo "Current version: $CURRENT_VERSION"
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
 
