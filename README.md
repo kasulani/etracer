@@ -1,5 +1,6 @@
 # eTracer
 
+[![PyPI version](https://img.shields.io/pypi/v/etracer.svg)](https://pypi.org/project/etracer/)
 [![codecov](https://codecov.io/github/kasulani/etracer/graph/badge.svg?token=J0X12GPW56)](https://codecov.io/github/kasulani/etracer)
 
 A utility package that provides enhanced debugging for Python stack traces with AI-powered error analysis and suggested
