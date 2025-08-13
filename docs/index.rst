@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-eTracer Documentation
+eTracer
 =====================
 
 A utility package that provides enhanced debugging for Python stack traces with AI-powered error analysis and suggested fixes.
