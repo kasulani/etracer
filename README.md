@@ -1,5 +1,6 @@
 # eTracer
 
+[![PyPI version](https://img.shields.io/pypi/v/etracer.svg)](https://pypi.org/project/etracer/)
 [![codecov](https://codecov.io/github/kasulani/etracer/graph/badge.svg?token=J0X12GPW56)](https://codecov.io/github/kasulani/etracer)
 
 A utility package that provides enhanced debugging for Python stack traces with AI-powered error analysis and suggested
@@ -32,14 +33,14 @@ pip install -e .
 This package follows [Semantic Versioning](https://semver.org/) with the following guidelines:
 
 - **0.x.y versions** (e.g., 0.1.0, 0.2.0) indicate **initial development phase**:
-  - The API is not yet stable and may change between minor versions
-  - Features may be added, modified, or removed without major version changes
-  - Not recommended for production-critical systems without pinned versions
+    - The API is not yet stable and may change between minor versions
+    - Features may be added, modified, or removed without major version changes
+    - Not recommended for production-critical systems without pinned versions
 
 - **1.0.0 and above** will indicate a **stable API** with semantic versioning guarantees:
-  - MAJOR version for incompatible API changes
-  - MINOR version for backwards-compatible functionality additions
-  - PATCH version for backwards-compatible bug fixes
+    - MAJOR version for incompatible API changes
+    - MINOR version for backwards-compatible functionality additions
+    - PATCH version for backwards-compatible bug fixes
 
 The current version is in early development stage, so expect possible API changes until the 1.0.0 release.
 
@@ -57,6 +58,11 @@ etracer.enable()
 # Any uncaught exceptions will be processed by tracer
 ```
 
+In this mode, eTracer will enhance your stack traces with better formatting, with color and local variable inspection,
+but it won't
+provide AI-powered analysis or suggestions. This is useful for quick debugging without needing an API key or AI
+integration.
+
 ### With AI-Powered Analysis
 
 ```python
@@ -65,15 +71,21 @@ import os
 
 # Enable tracer with AI
 etracer.enable(
-  enable_ai=True,
-  api_key="your-api-key",
-  model="your-preferred-model",
-  base_url="https://your-endpoint"
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
 )
 
 # Your code here
 # Errors will now get AI-powered explanations and fixes
 ```
+
+This mode requires specifying an API key, model and base url for an OpenAI-compatible LLM. It will analyze exceptions
+using AI and provide detailed explanations and suggested fixes for errors that occur in your code. This is particularly
+useful for complex errors where understanding the root cause can be challenging.
+
+You can use local LLMs run on your machine, using Ollama or self-hosted models that support the OpenAI API format.
 
 ## Usage Modes
 
@@ -84,10 +96,10 @@ import etracer
 
 # Enable at the start of your script
 etracer.enable(
-  enable_ai=True,
-  api_key="your-api-key",
-  model="your-preferred-model",
-  base_url="https://your-endpoint"
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
 )
 
 # All uncaught exceptions will be handled by tracer
@@ -100,10 +112,10 @@ import etracer
 
 # Configure as needed
 etracer.enable(
-  enable_ai=True,
-  api_key="your-api-key",
-  model="your-preferred-model",
-  base_url="https://your-endpoint"
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
 )
 
 
@@ -120,10 +132,10 @@ import etracer
 
 # Configure as needed
 etracer.enable(
-  enable_ai=True,
-  api_key="your-api-key",
-  model="your-preferred-model",
-  base_url="https://your-endpoint"
+    enable_ai=True,
+    api_key="your-api-key",
+    model="your-preferred-model",
+    base_url="https://your-endpoint"
 )
 
 # Use context manager for specific code blocks
@@ -323,21 +335,29 @@ make all
 
 The following Make commands are available:
 
-| Command              | Description                                       |
-|----------------------|---------------------------------------------------|
-| `make help`          | Show available commands                           |
-| `make install`       | Install the package                               |
-| `make dev-install`   | Install in development mode with dev dependencies |
-| `make format`        | Format code with Black                            |
-| `make lint`          | Run linting with Flake8                           |
-| `make typecheck`     | Run type checking with MyPy                       |
-| `make test`          | Run unit tests                                    |
-| `make test-coverage` | Run tests with coverage reporting                 |
+| Command                | Description                                       |
+|------------------------|---------------------------------------------------|
+| `make help`            | Show available commands                           |
+| `make install`         | Install the package                               |
+| `make dev-install`     | Install in development mode with dev dependencies |
+| `make format`          | Format code with Black                            |
+| `make lint`            | Run linting with Flake8                           |
+| `make typecheck`       | Run type checking with MyPy                       |
+| `make test`            | Run unit tests                                    |
+| `make test-coverage`   | Run tests with coverage reporting                 |
 | `make coverage-report` | Open HTML coverage report in browser              |
-| `make clean`         | Remove build artifacts                            |
-| `make all`           | Run format, lint, typecheck, and test             |
-| `make docs-html`     | Build HTML documentation                          |
-| `make docs-open`     | Open HTML documentation in browser                |
+| `make clean`           | Remove build artifacts                            |
+| `make all`             | Run format, lint, typecheck, and test             |
+| `make docs-html`       | Build HTML documentation                          |
+| `make docs-open`       | Open HTML documentation in browser                |
+
+## Additional Documentation
+
+For more detailed information about eTracer, refer to the following documents:
+
+- [Contributing Guide](CONTRIBUTING.md) - Guidelines for contributing to the project
+- [Deployment Guide](DEPLOYMENT.md) - Information about the release process and versioning
+- [Changelog](CHANGELOG.md) - History of changes and updates to the project
 
 ## License
 
